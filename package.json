@@ -30,5 +30,8 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "corsproxy": "corsproxy"
+  },
+  "devDependencies": {
+    "eslint-config-airbnb": "^16.1.0"
   }
 }

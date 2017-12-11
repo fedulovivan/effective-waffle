@@ -49,9 +49,13 @@ export const getRndDevName = state => {
     const jiraItem = getJiraItem(state);
     return get(jiraItem, `fields.${constants.CUST_FIELD_RND_DEVISION}.value`);
 }
-export const haveDirty = state => {
+export const isDirty = state => {
     const subtasks = getSubtasks(state);
     return subtasks.some(({ dirty }) => dirty);
+}
+export const hasNew = state => {
+    const subtasks = getSubtasks(state);
+    return subtasks.some(({ key }) => !key);
 }
 export const valid = state => true;
 export const isPending = state => {

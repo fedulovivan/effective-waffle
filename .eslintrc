@@ -1,0 +1,72 @@
+{
+    "extends": "eslint-config-airbnb",
+    "env": {
+        "browser": true,
+        "node": true
+    },
+    "parser": "babel-eslint",
+    "rules": {
+        "react/forbid-prop-types": 1,
+        "react/no-multi-comp": 0,
+        "react/jsx-indent": 0,
+        "react/jsx-indent-props": [1, 4],
+        "react/jsx-filename-extension": 0,
+        "react/no-unused-prop-types": 1,
+        "import/default": 0,
+        "import/extensions": 0,
+        "import/no-duplicates": 0,
+        "import/named": 0,
+        "import/namespace": 0,
+        "import/no-extraneous-dependencies": 0,
+        "import/no-unresolved": 0,
+        "import/no-named-as-default": 2,
+        "comma-dangle": 0,
+        "padded-blocks": 0,
+        "spaced-comment": 0,
+        "indent": 0,
+        "no-alert": 0,
+        "no-console": 1,
+        "no-debugger": 1,
+        "no-unused-vars": 1,
+        "no-trailing-spaces": 1,
+        "no-warning-comments": 1,
+        "one-var": 0,
+        "quotes": 0,
+        "space-before-function-paren": 0,
+        "space-before-blocks": 0,
+        "no-shadow": 1,
+        "consistent-return": 0,
+        "prefer-arrow-callback": 0,
+        "no-case-declarations": 0,
+        "default-case": 0,
+        "func-names": 0,
+        "no-var": 1,
+        "max-len": 1,
+        // https://github.com/eslint/eslint/issues/3959
+        // https://github.com/doshisid/eslint-restricted-globals/blob/master/index.js
+        "no-restricted-globals": [2, "addEventListener", "blur", "close", "closed", "confirm", "defaultStatus", "event", "external", "defaultstatus", "find", "focus", "frameElement", "frames", "history", "innerHeight", "innerWidth", "length", "location", "locationbar", "menubar", "moveBy", "moveTo", "name", "onblur", "onerror", "onfocus", "onload", "onresize", "onunload", "open", "opener", "opera", "outerHeight", "outerWidth", "pageXOffset", "pageYOffset", "parent", "print", "removeEventListener", "resizeBy", "resizeTo", "screen", "screenLeft", "screenTop", "screenX", "screenY", "scroll", "scrollbars", "scrollBy", "scrollTo", "scrollX", "scrollY", "self", "status", "statusbar", "stop", "toolbar", "top"],
+        "no-duplicate-imports": [1, {"includeExports": true}]
+    },
+    "plugins": [
+        "react",
+        "import"
+    ],
+    "settings": {
+        "import/parser": "babel-eslint",
+        "import/resolve": {
+            "moduleDirectory": [
+                "node_modules",
+                "src"
+            ]
+        }
+    },
+    "globals": {
+        "__DEVELOPMENT__": true,
+        "__CLIENT__": true,
+        "__SERVER__": true,
+        "__DISABLE_SSR__": true,
+        "__DEVTOOLS__": true,
+        "socket": true,
+        "webpackIsomorphicTools": true
+    }
+}

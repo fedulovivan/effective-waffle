@@ -5,6 +5,9 @@ import { connect } from 'react-redux';
 import * as selectors from './selectors';
 import * as constants from './constants';
 
+import Row from './Row';
+import None from './None';
+
 import Button from 'material-ui/Button';
 import TextField from 'material-ui/TextField';
 import List, {
@@ -47,7 +50,8 @@ const mapStateToProps = state => ({
     focusFactor: selectors.getFocusFactor(state),
     error: selectors.getError(state),
     rndDevName: selectors.getRndDevName(state),
-    haveDirty: selectors.haveDirty(state),
+    isDirty: selectors.isDirty(state),
+    hasNew: selectors.hasNew(state),
     valid: selectors.valid(state),
     isPending: selectors.isPending(state),
     user: selectors.getUser(state),
@@ -66,96 +70,6 @@ const mapDispatchToProps = dispatch => ({
     updUser: (val) => dispatch(actions.updUser(val)),
     updPass: (val) => dispatch(actions.updPass(val)),
 });
-
-class DelIcon extends PureComponent {
-    handleIconClick = () => this.props.delSubtask(this.props.task.id);
-    render() {
-        return (
-            <IconButton aria-label="Delete">
-                <DeleteIcon onClick={this.handleIconClick} />
-            </IconButton>
-        );
-    }
-}
-
-class None extends PureComponent {
-    render() {
-        return (
-            <span style={{color: 'gray'}}>{constants.NONE}</span>
-        );
-    }
-}
-
-class Row extends PureComponent {
-
-    handleSubtaskFieldChange = (name, value) => {
-        this.props.updSubtask(this.props.task.id, { [name]: value });
-    }
-
-    handleLabelChange = e => this.handleSubtaskFieldChange('label', e.target.value);
-    handleSummaryChange = e => this.handleSubtaskFieldChange('summary', e.target.value);
-    handleEstimateChange = e => this.handleSubtaskFieldChange('estimate', e.target.value);
-
-    render() {
-        const {
-            task,
-            labels,
-            delSubtask,
-        } = this.props;
-        const {
-            id,
-            label,
-            summary,
-            estimate,
-            key,
-            dirty,
-        } = task;
-        return (
-            <TableRow>
-                <TableCell>
-                    <Select
-                        style={{width: "100px"}}
-                        value={label}
-                        onChange={this.handleLabelChange}
-                    >
-                        {labels.map(value => <MenuItem value={value} key={value}>{value}</MenuItem>)}
-                    </Select>
-                </TableCell>
-                <TableCell>
-                    <Input
-                        style={{width: "450px"}}
-                        value={summary}
-                        onChange={this.handleSummaryChange}
-                    />
-                </TableCell>
-                <TableCell>
-                    <Input
-                        style={{width: "100px"}}
-                        value={estimate}
-                        onChange={this.handleEstimateChange}
-                    />
-                </TableCell>
-                <TableCell>
-                    {key ? (
-                        <a target="_blank" rel="noopener noreferrer" href={`https://jira.danateq.net/browse/${key}`}>{key}</a>
-                    ) : <None />}
-                </TableCell>
-                <TableCell style={{width: '100px'}}>
-                    {compact([
-                        dirty ? 'Need save' : null,
-                        key ? null : 'Not created',
-                        key && !dirty ? 'Clean': null,
-                    ]).join(' & ')}
-                </TableCell>
-                <TableCell>
-                    {!key && (
-                        <DelIcon task={task} delSubtask={delSubtask} />
-                    )}
-                </TableCell>
-            </TableRow>
-        );
-    }
-}
 
 class CustomTooltip extends Component {
     render() {
@@ -189,6 +103,18 @@ class App extends Component {
         this.props.updPass(e.target.value);
     }
 
+    componentDidMount() {
+        const {
+            rootItemKey,
+            fetchJiraItem,
+            isDirty,
+            hasNew,
+        } = this.props;
+        if (rootItemKey && !isDirty && !hasNew) {
+            fetchJiraItem();
+        }
+    }
+
     render() {
         const {
             // foo,
@@ -209,11 +135,12 @@ class App extends Component {
             error,
             syncWithJira,
             rndDevName,
-            haveDirty,
+            isDirty,
             valid,
             isPending,
             user,
             pass,
+            hasNew,
         } = this.props;
 
         const chartData = map(totalEstimateByLabel, (value, name) => {
@@ -225,6 +152,7 @@ class App extends Component {
                 <div className="column">
                     <h3>General params</h3>
                     <TextField
+                        disabled={hasNew || isDirty}    
                         value={rootItemKey}
                         label="Story"
                         onChange={this.handleRootItemKeyChange}
@@ -252,7 +180,11 @@ class App extends Component {
                         onChange={this.handleChangePass}
                     />
                     <br/>
-                    <Button raised onClick={fetchJiraItem}>Fetch root item</Button>
+                    {/* <Button 
+                        raised 
+                        onClick={fetchJiraItem}
+                        disabled={hasNew || isDirty}
+                    >Fetch root item</Button> */}
                     <br/>
                     <Button fab color="primary" onClick={addSubtask}><AddIcon/></Button>
                 </div>
@@ -332,7 +264,7 @@ class App extends Component {
                                 raised
                                 color="primary"
                                 onClick={syncWithJira}
-                                disabled={!(!isPending && valid && haveDirty && jiraItem && subtasks.length)}
+                                disabled={!(!isPending && valid && isDirty && jiraItem && subtasks.length)}
                             >Save To Jira</Button>
                         </div>
 

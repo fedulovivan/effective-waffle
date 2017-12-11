@@ -7,6 +7,7 @@ const LABEL_QA = 'QA';
 const LABEL_DB = 'DB';
 const LABEL_DOC = 'DOC';
 const LABEL_OTHER = 'OTHER';
+const LABEL_DEV = 'DEV';
 
 const EMPTY_SUBTASK = {
     label: LABEL_GUI,
@@ -15,17 +16,16 @@ const EMPTY_SUBTASK = {
     dirty: false,
 };
 
-let TASK_ID_SEQ = 1;
-
 const isValidLabel = label => [
     LABEL_GUI,
     LABEL_QA,
     LABEL_DB,
     LABEL_DOC,
     LABEL_OTHER,
+    LABEL_DEV,
 ].includes(label);
 
-const INITIAL_STATE = {
+export const INITIAL_STATE = {
     foo: 1,
     rootItemKey: 'LWB-4584', // hackatonteam2 story
     focusFactor: 0.5,
@@ -35,13 +35,10 @@ const INITIAL_STATE = {
         LABEL_DB,
         LABEL_DOC,
         LABEL_OTHER,
+        LABEL_DEV,
     ],
-    subtasks: [
-        /* {
-            ...EMPTY_SUBTASK,
-            ...{ id: TASK_ID_SEQ++ }
-        }, */
-    ],
+    subtaskIdSequence: 0,
+    subtasks: [],
     jiraItem: null,
     fetchJiraItemPending: false,
     createSubtaskPending: false,
@@ -51,7 +48,7 @@ const INITIAL_STATE = {
     pass: '',
 };
 
-const rootReducer = function(state = INITIAL_STATE, action) {
+const rootReducer = function(state/* = INITIAL_STATE*/, action) {
     const { type, payload } = action;
     switch (type) {
         case actionTypes.INC_FOO:
@@ -65,16 +62,18 @@ const rootReducer = function(state = INITIAL_STATE, action) {
                 foo: state.foo - 1,
             };
         case actionTypes.ADD_SUBTASK:
+            const subtaskIdSequence = state.subtaskIdSequence + 1;
             return {
                 ...state,
+                subtaskIdSequence,
                 subtasks: [
                     ...state.subtasks,
                     {
                         ...EMPTY_SUBTASK,
-                        ...{ id: TASK_ID_SEQ++ }
+                        ...{ id: subtaskIdSequence }
                     }
                 ]
-            }
+            };
         case actionTypes.DEL_SUBTASK: {
             const { id } = payload;
             return {
