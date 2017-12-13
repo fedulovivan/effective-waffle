@@ -1,6 +1,6 @@
 import * as actionTypes from './actionTypes';
-import { debug } from 'util';
-import * as selectors from './selectors';
+// import { debug } from 'util';
+// import * as selectors from './selectors';
 
 const LABEL_GUI = 'GUI';
 const LABEL_QA = 'QA';

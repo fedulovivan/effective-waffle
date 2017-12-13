@@ -2,7 +2,7 @@ import { createStore, applyMiddleware, compose } from 'redux'
 import rootReducer from './rootReducer';
 import thunk from 'redux-thunk';
 import { debounce } from 'lodash/function';
-import { omit, pick } from 'lodash/object';
+import { /* omit, */ pick } from 'lodash/object';
 import * as constants from './constants';
 import { INITIAL_STATE } from './rootReducer';
 
@@ -23,7 +23,7 @@ const store = createStore(
     persistedState ? {
         ...INITIAL_STATE,
         ...persistedState,
-    } : INITIAL_STATE,    
+    } : INITIAL_STATE,
     composeEnhancers(
         applyMiddleware(thunk)
     )
@@ -31,7 +31,7 @@ const store = createStore(
 
 store.subscribe(debounce(function() {
     localStorage.setItem(
-        constants.NAME, 
+        constants.NAME,
         JSON.stringify(pick(
             store.getState(),
             [

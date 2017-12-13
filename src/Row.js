@@ -1,10 +1,10 @@
-import React, { Component, PureComponent } from 'react';
-import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
+import React, { /* Component, */ PureComponent } from 'react';
+import /* Table, */ { /* TableBody, , TableHead, */TableCell, TableRow } from 'material-ui/Table';
 import Select from 'material-ui/Select';
 import { MenuItem } from 'material-ui/Menu';
-import Input, { InputLabel } from 'material-ui/Input';
+import Input/* , { InputLabel } */ from 'material-ui/Input';
 import { compact } from 'lodash/array';
-import DeleteIcon from 'material-ui-icons/Delete';
+// import DeleteIcon from 'material-ui-icons/Delete';
 import None from './None';
 import Delete from './Delete';
 
@@ -25,7 +25,7 @@ export default class Row extends PureComponent {
             delSubtask,
         } = this.props;
         const {
-            id,
+            // id,
             label,
             summary,
             estimate,
@@ -62,7 +62,7 @@ export default class Row extends PureComponent {
                         <a target="_blank" rel="noopener noreferrer" href={`https://jira.danateq.net/browse/${key}`}>{key}</a>
                     ) : <None />}
                 </TableCell>
-                <TableCell 
+                <TableCell
                     // style={{width: '100px'}}
                 >
                     {compact([

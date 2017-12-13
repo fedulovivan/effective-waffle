@@ -1,6 +1,6 @@
 import parseDuration from 'parse-duration';
-import { parse } from 'querystring';
-import moment from 'moment';
+// import { parse } from 'querystring';
+// import moment from 'moment';
 import { get } from 'lodash/object';
 import * as constants from './constants';
 
@@ -20,7 +20,7 @@ export const getTotalEstimate = state => {
     return subtasks.reduce((memo, { estimate }) => {
         try {
             memo += parseDuration(estimate);
-        } catch(e) {
+        } catch (e) {
             console.error(e);
         }
         return memo;
