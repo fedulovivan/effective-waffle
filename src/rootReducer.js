@@ -27,7 +27,7 @@ const isValidLabel = label => [
 
 export const INITIAL_STATE = {
     foo: 1,
-    rootItemKey: 'LWB-4584', // hackatonteam2 story
+    rootItemKey: /* 'LWB-4584' */null, // hackatonteam2 story
     focusFactor: 0.5,
     labels: [
         LABEL_GUI,

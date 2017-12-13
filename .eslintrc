@@ -6,6 +6,7 @@
     },
     "parser": "babel-eslint",
     "rules": {
+        "react/prop-types": "off",
         "react/forbid-prop-types": 1,
         "react/no-multi-comp": 0,
         "react/jsx-indent": 0,
@@ -45,7 +46,8 @@
         // https://github.com/eslint/eslint/issues/3959
         // https://github.com/doshisid/eslint-restricted-globals/blob/master/index.js
         "no-restricted-globals": [2, "addEventListener", "blur", "close", "closed", "confirm", "defaultStatus", "event", "external", "defaultstatus", "find", "focus", "frameElement", "frames", "history", "innerHeight", "innerWidth", "length", "location", "locationbar", "menubar", "moveBy", "moveTo", "name", "onblur", "onerror", "onfocus", "onload", "onresize", "onunload", "open", "opener", "opera", "outerHeight", "outerWidth", "pageXOffset", "pageYOffset", "parent", "print", "removeEventListener", "resizeBy", "resizeTo", "screen", "screenLeft", "screenTop", "screenX", "screenY", "scroll", "scrollbars", "scrollBy", "scrollTo", "scrollX", "scrollY", "self", "status", "statusbar", "stop", "toolbar", "top"],
-        "no-duplicate-imports": [1, {"includeExports": true}]
+        "no-duplicate-imports": [1, {"includeExports": true}],
+        "react/prefer-stateless-function": ["warn", { "ignorePureComponents": true }]
     },
     "plugins": [
         "react",
