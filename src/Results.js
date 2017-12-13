@@ -13,7 +13,6 @@ import * as actions from './actions';
 import * as constants from './constants';
 
 import None from './None';
-// import Row from './Row';
 
 const reduxConnector = connect(
     state => ({
@@ -27,12 +26,9 @@ const reduxConnector = connect(
         isDirty: selectors.isDirty(state),
         valid: selectors.valid(state),
         isPending: selectors.isPending(state),
-        // labels: selectors.getLabels(state),
     }),
     dispatch => ({
         syncWithJira: () => dispatch(actions.syncWithJira()),
-        // delSubtask: id => dispatch(actions.delSubtask(id)),
-        // updSubtask: (id, fields) => dispatch(actions.updSubtask(id, fields)),
     })
 );
 
@@ -70,9 +66,6 @@ class Results extends Component {
             isPending,
             valid,
             isDirty,
-            // labels,
-            // delSubtask,
-            // updSubtask,
         } = this.props;
 
         const chartData = map(totalEstimateByLabel, (value, name) => {
@@ -123,7 +116,7 @@ class Results extends Component {
                                 chartData.map((entry, index) => <Cell key={index} fill={COLORS[index % COLORS.length]}/>)
                             }
                         </Pie>
-                        <Tooltip content={<CustomTooltip />}/>
+                        <Tooltip content={<CustomTooltip />} />
                     </PieChart>
                     <Button
                         raised
