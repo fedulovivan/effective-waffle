@@ -2,11 +2,13 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { isArray } from 'lodash/lang';
 
+import Tooltip from 'material-ui/Tooltip';
 import TextField from 'material-ui/TextField';
-import AddIcon from 'material-ui-icons/Add';
 import Button from 'material-ui/Button';
 import IconButton from 'material-ui/IconButton';
 import Refresh from 'material-ui-icons/Refresh';
+import AddIcon from 'material-ui-icons/Add';
+import DoNotDisturbIcon from 'material-ui-icons/DoNotDisturb';
 
 import * as actions from './actions';
 import * as selectors from './selectors';
@@ -28,6 +30,7 @@ const reduxConnector = connect(
         updPass: val => dispatch(actions.updPass(val)),
         addSubtask: () => dispatch(actions.addSubtask()),
         fetchJiraItem: () => dispatch(actions.fetchJiraItem()),
+        discardAll: () => dispatch(actions.discardAll()),
     })
 );
 
@@ -59,6 +62,7 @@ class General extends Component {
             addSubtask,
             fetchJiraItem,
             validateGeneral,
+            discardAll,
         } = this.props;
 
         const getHelperText = (validationResults, fieldName) => {
@@ -79,7 +83,7 @@ class General extends Component {
                 <form>
                     <div className="story">
                         <TextField
-                            disabled={hasNew || isDirty}
+                            // disabled={hasNew || isDirty}
                             value={rootItemKey}
                             label="Story"
                             onChange={this.handleRootItemKeyChange}
@@ -87,8 +91,9 @@ class General extends Component {
                             error={isError(validateGeneral, 'rootItemKey')}
                         />
                         <IconButton
-                            disabled={hasNew || isDirty}
+                            // disabled={hasNew || isDirty}
                             aria-label="Re-fetch"
+                            title="Reload items from jira"
                         >
                             <Refresh onClick={fetchJiraItem} />
                         </IconButton>
@@ -125,15 +130,19 @@ class General extends Component {
                         color="primary"
                         onClick={addSubtask}
                     >
-                        Add subtask
+                        <AddIcon /> Add subtask
                     </Button>
-                    <Button
-                        raised
-                        // color="primary"
-                        // onClick={addSubtask}
-                    >
-                        Discard all
-                    </Button>
+                    {/* <Tooltip title="Discard all unsaved changes and re-fetch existing subtatsks from jira"> */}
+                        <Button
+                            title="Discard all unsaved changes and re-fetch existing subtatsks from jira"
+                            raised
+                            color="accent"
+                            disabled={!hasNew && !isDirty}
+                            onClick={discardAll}
+                        >
+                            <DoNotDisturbIcon /> Start over
+                        </Button>
+                    {/* </Tooltip> */}
                 </div>
             </div>
         );

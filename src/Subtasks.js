@@ -36,12 +36,12 @@ class Subtasks extends Component {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Category</TableCell>
-                            <TableCell>Summary</TableCell>
-                            <TableCell>Original Estimate</TableCell>
-                            <TableCell>Jira Item</TableCell>
-                            <TableCell>Row Status</TableCell>
-                            <TableCell />
+                            <TableCell className="category">Category</TableCell>
+                            <TableCell className="summary-and-description">Summary and Description</TableCell>
+                            <TableCell className="original-estimate">Original Estimate</TableCell>
+                            <TableCell className="jira-item">Jira Item</TableCell>
+                            <TableCell className="row-status">Record Status</TableCell>
+                            <TableCell className="actions" />
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -57,7 +57,7 @@ class Subtasks extends Component {
                             ))
                         }
                     </TableBody>
-                </Table>) : (<p className="no-one">No subtasks created.<br />Click &laquo;<a onClick={addSubtask}>add subtask</a>&raquo; to create first one</p>)}
+                </Table>) : (<p className="no-one">No subtasks created.<br />Click &laquo;<a href="#" onClick={addSubtask}>add subtask</a>&raquo; to create first one</p>)}
             </div>
         );
     }

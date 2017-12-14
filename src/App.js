@@ -26,13 +26,13 @@ class App extends Component {
 
     componentDidMount() {
         const {
-            rootItemKey,
+            // rootItemKey,
+            // isDirty,
+            // hasNew,
             fetchJiraItem,
-            isDirty,
-            hasNew,
             isGeneralValid,
         } = this.props;
-        if (rootItemKey && !isDirty && !hasNew && isGeneralValid) {
+        if (/* rootItemKey && !isDirty && !hasNew &&  */isGeneralValid) {
             fetchJiraItem();
         }
     }

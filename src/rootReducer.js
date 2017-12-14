@@ -1,54 +1,43 @@
+// import config from 'config';
+
+import { isNil } from 'lodash/lang';
+import { each } from 'lodash/collection';
 import * as actionTypes from './actionTypes';
+import * as constants from './constants';
+
 // import { debug } from 'util';
 // import * as selectors from './selectors';
-
-const LABEL_GUI = 'GUI';
-const LABEL_QA = 'QA';
-const LABEL_DB = 'DB';
-const LABEL_DOC = 'DOC';
-const LABEL_OTHER = 'OTHER';
-const LABEL_DEV = 'DEV';
-const LABEL_IMDB = 'IMDB';
-const LABEL_CORE = 'CORE';
+// console.log(config.get('labels'));
+// const LABEL_GUI = 'GUI';
+// const LABEL_QA = 'QA';
+// const LABEL_DB = 'DB';
+// const LABEL_DOC = 'DOC';
+// const LABEL_OTHER = 'OTHER';
+// const LABEL_DEV = 'DEV';
+// const LABEL_IMDB = 'IMDB';
+// const LABEL_CORE = 'CORE';
 
 const EMPTY_SUBTASK = {
-    label: LABEL_GUI,
+    // label: constants.LABEL_OTHER,
     summary: '',
     estimate: '1m',
     dirty: false,
 };
 
-const isValidLabel = label => [
-    LABEL_GUI,
-    LABEL_QA,
-    LABEL_DB,
-    LABEL_DOC,
-    LABEL_OTHER,
-    LABEL_DEV,
-    LABEL_IMDB,
-    LABEL_CORE,
-].includes(label);
+const isValidLabel = label => constants.LABELS.includes(label);
 
 export const INITIAL_STATE = {
     foo: 1,
     rootItemKey: /* 'LWB-4584' *//* null */"", // hackatonteam2 story
     focusFactor: 0.5,
-    labels: [
-        LABEL_GUI,
-        LABEL_QA,
-        LABEL_DB,
-        LABEL_DOC,
-        LABEL_OTHER,
-        LABEL_DEV,
-        LABEL_IMDB,
-        LABEL_CORE,
-    ],
+    labels: constants.LABELS,
     subtaskIdSequence: 0,
     subtasks: [],
     jiraItem: null,
     fetchJiraItemPending: false,
     createSubtaskPending: false,
     updSubtaskPending: false,
+    lastNewLabel: constants.LABEL_OTHER,
     error: null,
     user: '',
     pass: '',
@@ -76,7 +65,9 @@ const rootReducer = function(state/* = INITIAL_STATE*/, action) {
                     ...state.subtasks,
                     {
                         ...EMPTY_SUBTASK,
-                        ...{ id: subtaskIdSequence }
+                        ...{ id: subtaskIdSequence },
+                        ...{ label: state.lastNewLabel },
+                        ...{ dirty: true },
                     }
                 ]
             };
@@ -85,7 +76,7 @@ const rootReducer = function(state/* = INITIAL_STATE*/, action) {
             return {
                 ...state,
                 subtasks: state.subtasks.filter( task => id !== task.id)
-            }
+            };
         }
         case actionTypes.UPD_SUBTASK: {
             const { id, fields } = payload;
@@ -96,37 +87,49 @@ const rootReducer = function(state/* = INITIAL_STATE*/, action) {
                         ? {
                             ...task,
                             ...fields,
-                            ...{ dirty: true }
+                            ...{ dirty: true },
                         }
                         : task;
-                })
-            }
+                }),
+                lastNewLabel: fields.label || state.lastNewLabel,
+            };
         }
         case actionTypes.INIT_FROM_JIRA_ITEM: {
 
             const { rawSubtasks: { issues: subtasks } } = payload;
 
-            // //const jiraItem = selectors.getJiraItem(state);
-            // const { fields: { subtasks } } = jiraItem;
+            //const origSubtasks = state.subtasks;
+
+            // keep all new as is
+            const newStateSubtasks = state.subtasks.filter(({ key, dirty }) => !key || dirty);
+
+            const subtaskExist = (subtasks, keyToSearch) => subtasks.some(({ key }) => key === keyToSearch);
+
+            subtasks.forEach(({ id, key, fields: { summary, description, timeoriginalestimate } }) => {
+
+                if (subtaskExist(newStateSubtasks, key)) return;
+
+                const smatches = summary.match(/^([a-z]{1,5})\s?:\s?(.+)$/i);
+                const canExtractLabel = smatches && smatches.length === 3;
+                const candidateLabel = canExtractLabel && smatches[1].toUpperCase();
+                const isValid = isValidLabel(candidateLabel);
+
+                //EMPTY_SUBTASK
+
+                newStateSubtasks.push({
+                    id,
+                    label: isValid ? candidateLabel : constants.LABEL_OTHER,
+                    summary: canExtractLabel ? smatches[2] : summary,
+                    description: isNil(description) ? "" : description,
+                    estimate: `${timeoriginalestimate / 60}m`,
+                    dirty: false,
+                    key,
+                });
+            });
 
             return {
                 ...state,
-                subtasks: subtasks.map(({ id, key, fields: { summary, timeoriginalestimate } }) => {
-
-                    const smatches = summary.match(/^([a-z]{1,5})\s?:\s?(.+)$/i);
-                    const canExtractLabel = smatches && smatches.length === 3;
-                    const candidateLabel = canExtractLabel && smatches[1].toUpperCase();
-                    const isValid = isValidLabel(candidateLabel);
-
-                    return {
-                        id,
-                        label: isValid ? candidateLabel : LABEL_OTHER,
-                        summary: canExtractLabel ? smatches[2]: summary,
-                        estimate: `${timeoriginalestimate / 60}m`,
-                        dirty: false,
-                        key,
-                    };
-                })
+                subtasks: newStateSubtasks
             };
         }
         case actionTypes.FETCH_JIRA_ITEM_PENDING: {
@@ -234,6 +237,12 @@ const rootReducer = function(state/* = INITIAL_STATE*/, action) {
             return {
                 ...state,
                 pass: payload.val,
+            };
+        }
+        case actionTypes.DISCARD_ALL: {
+            return {
+                ...state,
+                subtasks: []
             };
         }
         default:

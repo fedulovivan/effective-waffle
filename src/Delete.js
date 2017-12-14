@@ -7,7 +7,7 @@ export default class Delete extends PureComponent {
     handleIconClick = () => this.props.delSubtask(this.props.task.id);
     render() {
         return (
-            <IconButton aria-label="Delete">
+            <IconButton title={this.props.title} aria-label="Delete">
                 <DeleteIcon onClick={this.handleIconClick} />
             </IconButton>
         );

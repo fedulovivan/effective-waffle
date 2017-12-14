@@ -2,11 +2,13 @@ import React, { Component, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import humanizeDuration from 'humanize-duration';
 import { map/* , size */ } from 'lodash/collection';
-
+import { compact } from 'lodash/array';
+import classNames from 'classnames';
 
 // import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
 import { PieChart, Pie, /* Sector, */ Cell, Tooltip } from 'recharts';
 import Button from 'material-ui/Button';
+import SyncIcon from 'material-ui-icons/Sync';
 
 import * as selectors from './selectors';
 import * as actions from './actions';
@@ -82,12 +84,44 @@ class Results extends Component {
         return (
             <div className="column result">
 
-                {jiraItem && (
+                {error && (
                     <div>
-                        <h3>Story details</h3>
-                        <dl>
+                        <h3>Error</h3>
+                        <p className="red error">{ error.message || JSON.stringify(error.jiraErrors) }</p>
+                    </div>
+                )}
+
+                <div>
+                    <h3>Subtasks statictics</h3>
+                    <dl className="flexed">
+                        <dt>Total subtasks</dt>
+                        <dd className="important">{subtasks.length}</dd>
+                        <dt>Dirty estimate (with focus factor)</dt>
+                        <dd className={classNames('important', { gray: dirtyTotalEstimate === 0 })}>{humanizeDuration(dirtyTotalEstimate)}</dd>
+                        <dt>Pure estimate</dt>
+                        <dd className={classNames({ gray: totalEstimate === 0 })}>{humanizeDuration(totalEstimate)}</dd>
+                    </dl>
+
+
+                    <h3>Pure Estimate By Category</h3>
+                    <div className="pie-chart-container">
+                        {chartData.length ? (
+                            <PieChart width={200} height={200}>
+                                <Pie dataKey="value" data={chartData} animationDuration={600}>
+                                    {
+                                        chartData.map((entry, index) => <Cell key={index} fill={COLORS[index % COLORS.length]}/>)
+                                    }
+                                </Pie>
+                                <Tooltip content={<CustomTooltip />} />
+                            </PieChart>
+                        ) : <p className="gray">Add subtasks to see drilldown</p>}
+                    </div>
+
+                    <h3>Main story details</h3>
+                    {jiraItem ? (
+                        <dl className="flexed">
                             <dt>Link</dt>
-                            <dd><a target="_blank" rel="noopener noreferrer" href={`https://jira.danateq.net/browse/${jiraItem.key}`}>{jiraItem.key}</a></dd>
+                            <dd><a title="Open item in new tab in Jira" target="_blank" rel="noopener noreferrer" href={`https://jira.danateq.net/browse/${jiraItem.key}`}>{jiraItem.key}</a></dd>
                             <dt>Summary</dt>
                             <dd>{jiraItem.fields.summary}</dd>
                             <dt>Storypoints</dt>
@@ -97,45 +131,25 @@ class Results extends Component {
                             <dt>Project</dt>
                             <dd>{jiraItem.fields.project.key} ({jiraItem.fields.project.name})</dd>
                         </dl>
-                    </div>
-                )}
+                    ) : <p className="red">Jira item with story is not loaded</p>}
 
-                {error && (
-                    <div>
-                        <h3>Error</h3>
-                        <p style={{ color: 'red' }}>{ error.message || JSON.stringify(error.jiraErrors) }</p>
-                    </div>
-                )}
-
-                <div>
-                    <h3>Subtasks statictics</h3>
-                    <dl>
-                        <dt>Total subtasks</dt>
-                        <dd>{subtasks.length}</dd>
-                        <dt>Pure estimate</dt>
-                        <dd>{humanizeDuration(totalEstimate)}</dd>
-                        <dt>Dirty estimate (with focus factor)</dt>
-                        <dd>{humanizeDuration(dirtyTotalEstimate)}</dd>
-                    </dl>
-
-                    <h3>Pure By Category</h3>
-                    <PieChart width={200} height={200}>
-                        <Pie dataKey="value" data={chartData} animationDuration={600}>
-                            {
-                                chartData.map((entry, index) => <Cell key={index} fill={COLORS[index % COLORS.length]}/>)
-                            }
-                        </Pie>
-                        <Tooltip content={<CustomTooltip />} />
-                    </PieChart>
                     <h3>Sync subtasks with Jira</h3>
                     <div className="vertical-buttons">
                         <Button
+                            title="Synchronize local changes with Jira"
                             raised
                             color="primary"
                             onClick={syncWithJira}
                             disabled={!(!isPending && valid && isDirty && jiraItem && subtasks.length)}
                         >
-                            {toCreate} to create and {toUpdate} to update
+                            {/* {toCreate} to create and {toUpdate} to update */}
+                            {/* {toCreate ? `` : null} */}
+                            {/* compact( */[
+                                <SyncIcon />,
+                                toCreate ? `create ${toCreate} item(s)` : null,
+                                toUpdate ? `update ${toUpdate} item(s)` : null,
+                                !toCreate && !toUpdate ? `Syncronize` : null,
+                            ]/* ).join(' and ') */}
                         </Button>
                     </div>
                 </div>

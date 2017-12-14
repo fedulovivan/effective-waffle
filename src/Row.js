@@ -10,12 +10,17 @@ import Delete from './Delete';
 
 export default class Row extends PureComponent {
 
+    static defaultProps = {
+        description: ""
+    };
+
     handleSubtaskFieldChange = (name, value) => {
         this.props.updSubtask(this.props.task.id, { [name]: value });
     }
 
     handleLabelChange = e => this.handleSubtaskFieldChange('label', e.target.value);
     handleSummaryChange = e => this.handleSubtaskFieldChange('summary', e.target.value);
+    handleDescriptionChange = e => this.handleSubtaskFieldChange('description', e.target.value);
     handleEstimateChange = e => this.handleSubtaskFieldChange('estimate', e.target.value);
 
     render() {
@@ -31,12 +36,12 @@ export default class Row extends PureComponent {
             estimate,
             key,
             dirty,
+            description,
         } = task;
         return (
             <TableRow>
                 <TableCell>
                     <Select
-                        // style={{width: "100px"}}
                         value={label}
                         onChange={this.handleLabelChange}
                     >
@@ -45,35 +50,42 @@ export default class Row extends PureComponent {
                 </TableCell>
                 <TableCell>
                     <Input
-                        // style={{width: "450px"}}
+                        autoFocus
+                        className="summary"
                         value={summary}
                         onChange={this.handleSummaryChange}
+                        placeholder="Summary"
+                    />
+                    <Input
+                        className="description"
+                        value={description}
+                        placeholder="Description"
+                        onChange={this.handleDescriptionChange}
                     />
                 </TableCell>
                 <TableCell>
                     <Input
-                        // style={{width: "100px"}}
                         value={estimate}
                         onChange={this.handleEstimateChange}
                     />
                 </TableCell>
                 <TableCell>
                     {key ? (
-                        <a target="_blank" rel="noopener noreferrer" href={`https://jira.danateq.net/browse/${key}`}>{key}</a>
+                        <a title="Open item in new tab in Jira" target="_blank" rel="noopener noreferrer" href={`https://jira.danateq.net/browse/${key}`}>{key}</a>
                     ) : <None />}
                 </TableCell>
                 <TableCell
                     // style={{width: '100px'}}
                 >
-                    {compact([
-                        dirty ? 'Need save' : null,
-                        key ? null : 'Not created',
-                        key && !dirty ? 'Clean': null,
-                    ]).join(' & ')}
+                    {/* compact( */[
+                        dirty && key ? 'To be updated in Jira' : null,
+                        !key ? 'Not created in Jira' : null,
+                        !dirty && key ? <span className="gray">Clean</span> : null,
+                    ]/* ).join(' & ') */}
                 </TableCell>
                 <TableCell>
                     {!key && (
-                        <Delete task={task} delSubtask={delSubtask} />
+                        <Delete title="Delete local item" task={task} delSubtask={delSubtask} />
                     )}
                 </TableCell>
             </TableRow>

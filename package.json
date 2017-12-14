@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "classnames": "^2.2.5",
     "corsproxy-https": "^1.5.2",
     "humanize-duration": "^3.12.0",
     "lodash": "^4.17.4",
@@ -22,6 +23,7 @@
     "request": "^2.83.0",
     "serialize-error": "^2.1.0",
     "serve": "^6.4.1",
+    "typeface-roboto": "^0.0.45",
     "validate.js": "^0.12.0"
   },
   "scripts": {

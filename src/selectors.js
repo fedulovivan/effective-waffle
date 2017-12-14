@@ -17,6 +17,7 @@ export const getError = state => getAll(state).error;
 export const getFocusFactor = state => getAll(state).focusFactor;
 export const getUser = state => getAll(state).user;
 export const getPass = state => getAll(state).pass;
+export const getLastNewLabel = state => getAll(state).lastNewLabel;
 
 export const getTotalEstimate = state => {
     const subtasks = getSubtasks(state);

@@ -1,3 +1,6 @@
+body {
+    font-family: 'Roboto', sans-serif;
+}
 body,
 .root {
     margin: 0;
@@ -8,19 +11,19 @@ body,
     display: flex;
     justify-content: space-between;
     /* max-width: 1200px; */
-    height: calc(100vh - 10px);
+    /* height: calc(100vh - 10px); */
     align-items: stretch;
-    border: 1px solid #fdd;
+    /* border: 1px solid #fdd; */
     margin: 0;
     padding: 0;
 }
 
 .column {
     padding: 10px;
-    border: 1px solid #ddd;
+    /* border: 1px solid #ddd; */
 }
 
-.vertical-buttons > button {
+.vertical-buttons  button {
     align-self: stretch;
     margin: 10px;
 }
@@ -65,6 +68,92 @@ body,
     min-width: 250px;
 }
 
-dt {
+.gray {
   color: gray;
+}
+
+.red {
+    color: red;
+}
+
+dl.flexed {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+}
+
+dl.flexed > * {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    padding-bottom: 10px;
+}
+
+dl.flexed > dt {
+    /* align-self: flex-start; */
+    color: gray;
+    /* border: 1px solid green; */
+    text-align: right;
+    width: 45%;
+
+}
+
+dl.flexed > dd {
+    /* align-self: flex-end; */
+    /* border: 1px solid blue; */
+    width: 45%;
+    padding-left: 10px;
+}
+
+dl.flexed > dd.important {
+    font-size: 1.5em;
+    line-height: 21px;
+}
+
+h3 {
+    font-size: 14px;
+    text-transform: uppercase;
+    color: rgb(0, 84, 153);
+    text-align: center;
+    border-bottom: 2px solid rgb(154, 218, 253);
+}
+
+th.category {
+    width: 80px;
+}
+
+th.summary-and-description {
+
+}
+
+th.original-estimate {
+    width: 80px;
+}
+
+th.jira-item {
+    width: 80px;
+}
+
+th.row-status {
+    width: 80px;
+}
+
+th.actions {
+    width: 80px;
+}
+
+.summary > input,
+.description > input {
+    width: calc(100vw - 1200px);
+}
+
+.pie-chart-container > * {
+    margin: auto;
+    text-align: center;
+}
+
+.result .error {
+    text-align: center;
 }

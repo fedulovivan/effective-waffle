@@ -5,12 +5,9 @@ import * as actionTypes from './actionTypes';
 import * as selectors from './selectors';
 import * as constants from './constants';
 
-
 const HOST = window.location.host.split(":")[0];
 
 const PROXY_URL = `http://${HOST}:1337/jira.danateq.net:443/rest/api/2`;
-
-// const FETCH_OPTS = ;
 
 async function doRequest(token, apiUrl, method, payload) {
     const result = await fetch(
@@ -49,6 +46,11 @@ export function decFoo() {
     return { type: actionTypes.DEC_FOO };
 }
 
+export const initFromJiraItem = rawSubtasks => ({
+    type: actionTypes.INIT_FROM_JIRA_ITEM,
+    payload: { rawSubtasks }
+});
+
 export const fetchSubtasks = () => async function(dispatch, getState, api) {
     const state = getState();
     const rootItemKey = selectors.getRootItemKey(state);
@@ -67,7 +69,7 @@ export const fetchSubtasks = () => async function(dispatch, getState, api) {
         //     payload: { error: serializeError(error) }
         // });
     }
-}
+};
 
 export const fetchJiraItem = () => async function(dispatch, getState, api) {
     const state = getState();
@@ -88,7 +90,15 @@ export const fetchJiraItem = () => async function(dispatch, getState, api) {
             payload: { error: serializeError(error) }
         });
     }
-}
+};
+
+export const discardAll = () => async function(dispatch, getState, api) {
+    dispatch({
+        type: actionTypes.DISCARD_ALL
+    });
+    // localStorage.setItem(constants.NAME, "{}");
+    dispatch(fetchJiraItem());
+};
 
 export const updateSubtask = (task) => async function(dispatch, getState, api) {
     const state = getState();
@@ -96,6 +106,7 @@ export const updateSubtask = (task) => async function(dispatch, getState, api) {
     const {
         label,
         summary,
+        description,
         key,
         estimate,
     } = task;
@@ -103,6 +114,7 @@ export const updateSubtask = (task) => async function(dispatch, getState, api) {
     const requestPayload = {
         fields: {
             summary: `${label}: ${summary}`,
+            description,
             timetracking: {
                 originalEstimate: estimate
             }
@@ -113,7 +125,7 @@ export const updateSubtask = (task) => async function(dispatch, getState, api) {
         const responseJson = await doRequest(token, url, 'PUT', requestPayload);
         dispatch({
             type: actionTypes.UPD_SUBTASK_SUCCESS,
-            payload:{ task, responseJson }
+            payload: { task, responseJson }
         });
     } catch (error) {
         dispatch({
@@ -121,7 +133,7 @@ export const updateSubtask = (task) => async function(dispatch, getState, api) {
             payload: { task, error: serializeError(error) }
         });
     }
-}
+};
 
 export const createSubtask = (task) => async function(dispatch, getState, api) {
     dispatch({ type: actionTypes.CREATE_SUBTASK_PENDING });
@@ -133,6 +145,7 @@ export const createSubtask = (task) => async function(dispatch, getState, api) {
     const {
         label,
         summary,
+        description,
         estimate,
     } = task;
     const requestPayload = {
@@ -144,6 +157,7 @@ export const createSubtask = (task) => async function(dispatch, getState, api) {
                 key: rootItemKey
             },
             summary: `${label}: ${summary}`,
+            description,
             issuetype: {
                 id: 5 // subtask
             },
@@ -162,13 +176,13 @@ export const createSubtask = (task) => async function(dispatch, getState, api) {
             type: actionTypes.CREATE_SUBTASK_SUCCESS,
             payload:{ task, newItemDetails: responseJson }
         });
-    } catch(error) {
+    } catch (error) {
         dispatch({
             type: actionTypes.CREATE_SUBTASK_FAIL,
             payload: { task, error: serializeError(error) }
         });
     }
-}
+};
 
 export const syncWithJira = () => async function(dispatch, getState, api) {
     dispatch({
@@ -190,7 +204,7 @@ export const syncWithJira = () => async function(dispatch, getState, api) {
             dispatch(createSubtask(task));
         }
     });
-}
+};
 
 export const addSubtask = () => ({
     type: actionTypes.ADD_SUBTASK
@@ -214,11 +228,6 @@ export const updUser = val => ({
 export const updPass = val => ({
     type: actionTypes.UPD_PASS,
     payload: { val },
-});
-
-export const initFromJiraItem = rawSubtasks => ({
-    type: actionTypes.INIT_FROM_JIRA_ITEM,
-    payload: { rawSubtasks }
 });
 
 export const updRootItemKey = rootItemKey => async function(dispatch, getState, api) {

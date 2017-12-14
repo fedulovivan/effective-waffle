@@ -24,3 +24,5 @@ export const UPD_PASS = 'UPD_PASS';
 
 export const CLEAR_ERROR = 'CLEAR_ERROR';
 
+export const DISCARD_ALL = 'DISCARD_ALL';
+
