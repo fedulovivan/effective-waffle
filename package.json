@@ -21,17 +21,19 @@
     "redux-thunk": "^2.2.0",
     "request": "^2.83.0",
     "serialize-error": "^2.1.0",
-    "serve": "^6.4.1"
+    "serve": "^6.4.1",
+    "validate.js": "^0.12.0"
   },
   "scripts": {
     "serve": "PORT=6613 serve -s build",
-    "start": "react-scripts start",
+    "start": "PORT=3333 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "corsproxy": "corsproxy"
   },
   "devDependencies": {
-    "eslint-config-airbnb": "^16.1.0"
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-disable": "^1.0.0"
   }
 }

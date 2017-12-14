@@ -26,6 +26,7 @@ const reduxConnector = connect(
         isDirty: selectors.isDirty(state),
         valid: selectors.valid(state),
         isPending: selectors.isPending(state),
+        syncWithJiraStats: selectors.getSyncWithJiraStats(state),
     }),
     dispatch => ({
         syncWithJira: () => dispatch(actions.syncWithJira()),
@@ -66,14 +67,20 @@ class Results extends Component {
             isPending,
             valid,
             isDirty,
+            syncWithJiraStats,
         } = this.props;
 
         const chartData = map(totalEstimateByLabel, (value, name) => {
             return { name, value };
         });
 
+        const {
+            toCreate,
+            toUpdate,
+        } = syncWithJiraStats;
+
         return (
-            <div className="column">
+            <div className="column result">
 
                 {jiraItem && (
                     <div>
@@ -87,6 +94,8 @@ class Results extends Component {
                             <dd>{jiraItem.fields[constants.CUST_FIELD_STORY_POINTS] || <None />}</dd>
                             <dt>R&D Division name</dt>
                             <dd>{rndDevName || <None />}</dd>
+                            <dt>Project</dt>
+                            <dd>{jiraItem.fields.project.key} ({jiraItem.fields.project.name})</dd>
                         </dl>
                     </div>
                 )}
@@ -109,7 +118,7 @@ class Results extends Component {
                         <dd>{humanizeDuration(dirtyTotalEstimate)}</dd>
                     </dl>
 
-                    <h3>By Category</h3>
+                    <h3>Pure By Category</h3>
                     <PieChart width={200} height={200}>
                         <Pie dataKey="value" data={chartData} animationDuration={600}>
                             {
@@ -118,14 +127,17 @@ class Results extends Component {
                         </Pie>
                         <Tooltip content={<CustomTooltip />} />
                     </PieChart>
-                    <Button
-                        raised
-                        color="primary"
-                        onClick={syncWithJira}
-                        disabled={!(!isPending && valid && isDirty && jiraItem && subtasks.length)}
-                    >
-                        Save To Jira
-                    </Button>
+                    <h3>Sync subtasks with Jira</h3>
+                    <div className="vertical-buttons">
+                        <Button
+                            raised
+                            color="primary"
+                            onClick={syncWithJira}
+                            disabled={!(!isPending && valid && isDirty && jiraItem && subtasks.length)}
+                        >
+                            {toCreate} to create and {toUpdate} to update
+                        </Button>
+                    </div>
                 </div>
 
             </div>

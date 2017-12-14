@@ -49,11 +49,13 @@
         "no-duplicate-imports": [1, {"includeExports": true}],
         "react/prefer-stateless-function": "off",
         "arrow-parens": "off",
-        "arrow-body-style": "off"
+        "arrow-body-style": "off",
+        "function-paren-newline": "off"
     },
     "plugins": [
         "react",
-        "import"
+        "import",
+        "disable"
     ],
     "settings": {
         "import/parser": "babel-eslint",
@@ -62,6 +64,11 @@
                 "node_modules",
                 "src"
             ]
+        },
+        "eslint-plugin-disable": {
+            "paths": {
+                "jsx-a11y/*": ["*"]
+            }
         }
     },
     "globals": {

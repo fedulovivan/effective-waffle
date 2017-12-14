@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { isArray } from 'lodash/lang';
 
 import TextField from 'material-ui/TextField';
 import AddIcon from 'material-ui-icons/Add';
@@ -18,6 +19,7 @@ const reduxConnector = connect(
         focusFactor: selectors.getFocusFactor(state),
         user: selectors.getUser(state),
         pass: selectors.getPass(state),
+        validateGeneral: selectors.validateGeneral(state),
     }),
     dispatch => ({
         updRootItemKey: rootItemKey => dispatch(actions.updRootItemKey(rootItemKey)),
@@ -56,48 +58,83 @@ class General extends Component {
             pass,
             addSubtask,
             fetchJiraItem,
+            validateGeneral,
         } = this.props;
+
+        const getHelperText = (validationResults, fieldName) => {
+            if (!validationResults) return null;
+            const errors = validationResults[fieldName];
+            if (!isArray(errors) || errors.length === 0) return null;
+            return errors.join(',');
+        };
+        const isError = (validationResults, fieldName) => {
+            if (!validationResults) return false;
+            const errors = validationResults[fieldName];
+            return isArray(errors) && errors.length > 0;
+        };
+
         return (
-            <div className="column">
+            <div className="column general">
                 <h3>General params</h3>
-                <TextField
-                    disabled={hasNew || isDirty}
-                    value={rootItemKey}
-                    label="Story"
-                    onChange={this.handleRootItemKeyChange}
-                />
-                <IconButton
-                    disabled={hasNew || isDirty}
-                    aria-label="Re-fetch"
-                >
-                    <Refresh onClick={fetchJiraItem} />
-                </IconButton>
-                <br />
-                <TextField
-                    value={focusFactor}
-                    label="Focus Factor"
-                    onChange={this.handleFocusFactorChange}
-                    type="number"
-                    min="0"
-                    max="1"
-                />
-                <br />
-                <TextField
-                    value={user}
-                    label="User"
-                    onChange={this.handleChangeUser}
-                />
-                <br />
-                <TextField
-                    value={pass}
-                    label="Pass"
-                    type="password"
-                    onChange={this.handleChangePass}
-                />
-                <br />
-                <Button fab color="primary" onClick={addSubtask}>
-                    <AddIcon />
-                </Button>
+                <form>
+                    <div className="story">
+                        <TextField
+                            disabled={hasNew || isDirty}
+                            value={rootItemKey}
+                            label="Story"
+                            onChange={this.handleRootItemKeyChange}
+                            helperText={getHelperText(validateGeneral, 'rootItemKey')}
+                            error={isError(validateGeneral, 'rootItemKey')}
+                        />
+                        <IconButton
+                            disabled={hasNew || isDirty}
+                            aria-label="Re-fetch"
+                        >
+                            <Refresh onClick={fetchJiraItem} />
+                        </IconButton>
+                    </div>
+                    <TextField
+                        value={focusFactor}
+                        label="Focus Factor"
+                        onChange={this.handleFocusFactorChange}
+                        type="number"
+                        min="0"
+                        max="1"
+                        helperText={getHelperText(validateGeneral, 'focusFactor')}
+                        error={isError(validateGeneral, 'focusFactor')}
+                    />
+                    <TextField
+                        value={user}
+                        label="User"
+                        onChange={this.handleChangeUser}
+                        helperText={getHelperText(validateGeneral, 'user')}
+                        error={isError(validateGeneral, 'user')}
+                    />
+                    <TextField
+                        value={pass}
+                        label="Pass"
+                        type="password"
+                        onChange={this.handleChangePass}
+                        helperText={getHelperText(validateGeneral, 'pass')}
+                        error={isError(validateGeneral, 'pass')}
+                    />
+                </form>
+                <div className="vertical-buttons">
+                    <Button
+                        raised
+                        color="primary"
+                        onClick={addSubtask}
+                    >
+                        Add subtask
+                    </Button>
+                    <Button
+                        raised
+                        // color="primary"
+                        // onClick={addSubtask}
+                    >
+                        Discard all
+                    </Button>
+                </div>
             </div>
         );
     }

@@ -1,10 +1,10 @@
+import serializeError from 'serialize-error';
+import { each } from 'lodash/collection';
+
 import * as actionTypes from './actionTypes';
 import * as selectors from './selectors';
 import * as constants from './constants';
 
-import serializeError from 'serialize-error';
-
-import { each } from 'lodash/collection';
 
 const HOST = window.location.host.split(":")[0];
 
@@ -16,7 +16,7 @@ async function doRequest(token, apiUrl, method, payload) {
     const result = await fetch(
         `${PROXY_URL}${apiUrl}`, {
             headers: new Headers({
-                'Authorization': token,
+                Authorization: token,
                 'Content-Type': 'application/json',
             }),
             credentials: 'include',
@@ -61,7 +61,7 @@ export const fetchSubtasks = () => async function(dispatch, getState, api) {
         //     payload: { jiraItem: responseJson }
         // });
         dispatch(initFromJiraItem(responseJson));
-    } catch(error) {
+    } catch (error) {
         // dispatch({
         //     type: actionTypes.FETCH_JIRA_ITEM_FAIL,
         //     payload: { error: serializeError(error) }
@@ -82,7 +82,7 @@ export const fetchJiraItem = () => async function(dispatch, getState, api) {
             payload: { jiraItem: responseJson }
         });
         dispatch(fetchSubtasks());
-    } catch(error) {
+    } catch (error) {
         dispatch({
             type: actionTypes.FETCH_JIRA_ITEM_FAIL,
             payload: { error: serializeError(error) }
@@ -101,10 +101,10 @@ export const updateSubtask = (task) => async function(dispatch, getState, api) {
     } = task;
     const url = `/issue/${key}`;
     const requestPayload = {
-        "fields": {
-            "summary": `${label}: ${summary}`,
-            "timetracking": {
-                "originalEstimate": estimate
+        fields: {
+            summary: `${label}: ${summary}`,
+            timetracking: {
+                originalEstimate: estimate
             }
         }
     };
@@ -115,7 +115,7 @@ export const updateSubtask = (task) => async function(dispatch, getState, api) {
             type: actionTypes.UPD_SUBTASK_SUCCESS,
             payload:{ task, responseJson }
         });
-    } catch(error) {
+    } catch (error) {
         dispatch({
             type: actionTypes.UPD_SUBTASK_FAIL,
             payload: { task, error: serializeError(error) }
@@ -128,6 +128,7 @@ export const createSubtask = (task) => async function(dispatch, getState, api) {
     const state = getState();
     const rootItemKey = selectors.getRootItemKey(state);
     const rndDevName = selectors.getRndDevName(state);
+    const jiraItem = selectors.getJiraItem(state);
     const url = `/issue`;
     const {
         label,
@@ -135,22 +136,22 @@ export const createSubtask = (task) => async function(dispatch, getState, api) {
         estimate,
     } = task;
     const requestPayload = {
-        "fields": {
-            "project": {
-                "key": "LWB"
+        fields: {
+            project: {
+                key: jiraItem.fields.project.key,
             },
-            "parent": {
-                "key": rootItemKey
+            parent: {
+                key: rootItemKey
             },
-            "summary": `${label}: ${summary}`,
-            "issuetype": {
-                "id": 5 // subtask
+            summary: `${label}: ${summary}`,
+            issuetype: {
+                id: 5 // subtask
             },
-            "timetracking": {
-                "originalEstimate": estimate
+            timetracking: {
+                originalEstimate: estimate
             },
             [constants.CUST_FIELD_RND_DEVISION]: {
-                "value": rndDevName
+                value: rndDevName
             }
         }
     };
@@ -226,9 +227,9 @@ export const updRootItemKey = rootItemKey => async function(dispatch, getState, 
         payload: { rootItemKey }
     });
     dispatch(fetchJiraItem());
-}
+};
 
 export const updFocusFactor = focusFactor => ({
     type: actionTypes.UPD_FOCUS_FACTOR,
     payload: { focusFactor }
-})
+});

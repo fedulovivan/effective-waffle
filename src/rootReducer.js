@@ -8,6 +8,8 @@ const LABEL_DB = 'DB';
 const LABEL_DOC = 'DOC';
 const LABEL_OTHER = 'OTHER';
 const LABEL_DEV = 'DEV';
+const LABEL_IMDB = 'IMDB';
+const LABEL_CORE = 'CORE';
 
 const EMPTY_SUBTASK = {
     label: LABEL_GUI,
@@ -23,11 +25,13 @@ const isValidLabel = label => [
     LABEL_DOC,
     LABEL_OTHER,
     LABEL_DEV,
+    LABEL_IMDB,
+    LABEL_CORE,
 ].includes(label);
 
 export const INITIAL_STATE = {
     foo: 1,
-    rootItemKey: /* 'LWB-4584' */null, // hackatonteam2 story
+    rootItemKey: /* 'LWB-4584' *//* null */"", // hackatonteam2 story
     focusFactor: 0.5,
     labels: [
         LABEL_GUI,
@@ -36,6 +40,8 @@ export const INITIAL_STATE = {
         LABEL_DOC,
         LABEL_OTHER,
         LABEL_DEV,
+        LABEL_IMDB,
+        LABEL_CORE,
     ],
     subtaskIdSequence: 0,
     subtasks: [],
