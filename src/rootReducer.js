@@ -1,10 +1,38 @@
 // import config from 'config';
+import humanizeDuration from 'humanize-duration';
 
 import { isNil } from 'lodash/lang';
 import { each } from 'lodash/collection';
 import * as actionTypes from './actionTypes';
 import * as constants from './constants';
 
+const shortEnglishHumanizer = humanizeDuration.humanizer({
+    language: 'shortEn',
+    languages: {
+        shortEn: {
+            //y: () => 'y',
+            //mo: () => 'mo',
+            w: () => 'w',
+            d: () => 'd',
+            h: () => 'h',
+            m: () => 'm',
+            s: () => 's',
+            //ms: () => 'ms',
+        }
+    },
+    units: [/*'y', 'mo',*/'w', 'd', 'h', 'm', 's'],
+    unitMeasures: {
+        //y: 31557600000,
+        //mo: 2629800000, // jira 864000000
+        w: 144000000, // jira 144000000 normal 604800000
+        d: 28800000, // jira 28800000 normal 86400000
+        h: 3600000,
+        m: 60000,
+        s: 1000,
+        ms: 1
+    }
+});
+  
 // import { debug } from 'util';
 // import * as selectors from './selectors';
 // console.log(config.get('labels'));
@@ -121,7 +149,7 @@ const rootReducer = function(state/* = INITIAL_STATE*/, action) {
                     label: isValid ? candidateLabel : constants.LABEL_OTHER,
                     summary: canExtractLabel ? smatches[2] : summary,
                     description: isNil(description) ? "" : description,
-                    estimate: `${timeoriginalestimate / 60}m`,
+                    estimate: shortEnglishHumanizer(timeoriginalestimate * 1000, { spacer: '', delimiter: ' ' }),
                     dirty: false,
                     key,
                 });

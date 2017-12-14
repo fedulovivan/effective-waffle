@@ -16,6 +16,22 @@ import * as constants from './constants';
 
 import None from './None';
 
+const humaniserOpts = {
+    units: [/*'y', 'mo',*/'w', 'd', 'h', 'm', 's'],
+    unitMeasures: {
+        //y: 31557600000,
+        //mo: 2629800000, // jira 864000000
+        w: 144000000, // jira 144000000 normal 604800000
+        d: 28800000, // jira 28800000 normal 86400000
+        h: 3600000,
+        m: 60000,
+        s: 1000,
+        ms: 1
+    },
+    largest: 4, 
+    round: false,
+};
+
 const reduxConnector = connect(
     state => ({
         subtasks: selectors.getSubtasks(state),
@@ -49,7 +65,7 @@ class CustomTooltip extends PureComponent {
         } = this.props;
         return payload && payload[0] ? (
             <div>
-                {payload[0].name}: {humanizeDuration(payload[0].value)}
+                {payload[0].name}: {humanizeDuration(payload[0].value, humaniserOpts)}
             </div>
         ) : null;
     }
@@ -97,9 +113,9 @@ class Results extends Component {
                         <dt>Total sub-tasks</dt>
                         <dd className="important">{subtasks.length}</dd>
                         <dt>Dirty estimate (with focus factor)</dt>
-                        <dd className={classNames('important', { gray: dirtyTotalEstimate === 0 })}>{humanizeDuration(dirtyTotalEstimate)}</dd>
+                        <dd className={classNames('important', { gray: dirtyTotalEstimate === 0 })}>{humanizeDuration(dirtyTotalEstimate, humaniserOpts)}</dd>
                         <dt>Pure estimate</dt>
-                        <dd className={classNames({ gray: totalEstimate === 0 })}>{humanizeDuration(totalEstimate)}</dd>
+                        <dd className={classNames({ gray: totalEstimate === 0 })}>{humanizeDuration(totalEstimate, humaniserOpts)}</dd>
                     </dl>
 
                     <h3>Pure Estimate By Category</h3>

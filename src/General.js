@@ -99,7 +99,7 @@ class General extends Component {
                         <TextField
                             // disabled={hasNew || isDirty}
                             value={rootItemKey}
-                            label="Story"
+                            label="Main Story"
                             onChange={this.handleRootItemKeyChange}
                             helperText={getHelperText(validateGeneral, 'rootItemKey')}
                             error={isError(validateGeneral, 'rootItemKey')}
@@ -124,14 +124,14 @@ class General extends Component {
                     />
                     <TextField
                         value={user}
-                        label="User"
+                        label="Jira Login"
                         onChange={this.handleChangeUser}
                         helperText={getHelperText(validateGeneral, 'user')}
                         error={isError(validateGeneral, 'user')}
                     />
                     <TextField
                         value={pass}
-                        label="Pass"
+                        label="Jira Password (saved only in browser)"
                         type="password"
                         onChange={this.handleChangePass}
                         helperText={getHelperText(validateGeneral, 'pass')}
@@ -158,8 +158,9 @@ class General extends Component {
                         {/* compact( */[
                             <SyncIcon />,
                             toCreate ? `create ${toCreate} item(s)` : null,
+                            toCreate && toUpdate ? ` and ` : null,
                             toUpdate ? `update ${toUpdate} item(s)` : null,
-                            !toCreate && !toUpdate ? `Syncronize` : null,
+                            !toCreate && !toUpdate ? `Synchronize` : null,
                         ]/* ).join(' and ') */}
                     </Button> 
                     {/* <Tooltip title="foo">                    */}

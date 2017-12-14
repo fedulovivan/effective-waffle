@@ -36,10 +36,11 @@ export const getTotalEstimate = state => {
 
 export const getTotalEstimateByLabel = state => {
     const subtasks = getSubtasks(state);
+    const focusFactor = getFocusFactor(state);
     return subtasks.reduce((memo, { estimate, label }) => {
         if (!memo[label]) memo[label] = 0;
         try {
-            memo[label] += parseDuration(estimate);
+            memo[label] += (parseDuration(estimate)/* / focusFactor*/);
         } catch (e) {
             console.error(e);
         }
@@ -50,9 +51,9 @@ export const getTotalEstimateByLabel = state => {
 export const getDirtyTotalEstimate = state => {
     const focusFactor = getFocusFactor(state);
     const totalEstimate = getTotalEstimate(state);
-    const res = totalEstimate / focusFactor;
-    const presision = 60 * /*60 **/ 1000; // round to nearest hour (MINUTE)
-    return Math.round(res / presision) * presision;
+    return totalEstimate / focusFactor;
+    //const presision = 60 * /*60 **/ 1000; // round to nearest hour (MINUTE)
+    //return Math.round(res / presision) * presision;
 };
 
 export const getRndDevName = state => {
