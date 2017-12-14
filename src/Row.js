@@ -7,6 +7,7 @@ import { compact } from 'lodash/array';
 // import DeleteIcon from 'material-ui-icons/Delete';
 import None from './None';
 import Delete from './Delete';
+import * as constants from './constants';
 
 export default class Row extends PureComponent {
 
@@ -38,43 +39,51 @@ export default class Row extends PureComponent {
             dirty,
             description,
         } = task;
+
+        const cellStyle = { /*padding: 0*/ };
+
         return (
             <TableRow>
-                <TableCell>
+                <TableCell className="cell category" >
                     <Select
+                        style={{ backgroundColor: constants.LABEL_TO_COLOR[label], padding: "3px" }}
                         value={label}
                         onChange={this.handleLabelChange}
                     >
-                        {labels.map(value => <MenuItem value={value} key={value}>{value}</MenuItem>)}
+                        {labels.map(value => <MenuItem style={{ backgroundColor: constants.LABEL_TO_COLOR[value] }} value={value} key={value}>{value}</MenuItem>)}
                     </Select>
                 </TableCell>
-                <TableCell>
+                <TableCell className="cell summary-and-description" >
                     <Input
-                        autoFocus
+                        // autoFocus
                         className="summary"
                         value={summary}
                         onChange={this.handleSummaryChange}
                         placeholder="Summary"
                     />
                     <Input
+                        multiline
+                        rowsMax={3}
                         className="description"
                         value={description}
                         placeholder="Description"
                         onChange={this.handleDescriptionChange}
                     />
                 </TableCell>
-                <TableCell>
+                <TableCell className="cell original-estimate" >
                     <Input
                         value={estimate}
                         onChange={this.handleEstimateChange}
                     />
                 </TableCell>
-                <TableCell>
+                <TableCell className="cell jira-item" >
                     {key ? (
                         <a title="Open item in new tab in Jira" target="_blank" rel="noopener noreferrer" href={`https://jira.danateq.net/browse/${key}`}>{key}</a>
                     ) : <None />}
                 </TableCell>
                 <TableCell
+                    className="cell row-status"
+                    
                     // style={{width: '100px'}}
                 >
                     {/* compact( */[
@@ -83,7 +92,7 @@ export default class Row extends PureComponent {
                         !dirty && key ? <span className="gray">Clean</span> : null,
                     ]/* ).join(' & ') */}
                 </TableCell>
-                <TableCell>
+                <TableCell className="cell actions" >
                     {!key && (
                         <Delete title="Delete local item" task={task} delSubtask={delSubtask} />
                     )}

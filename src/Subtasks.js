@@ -12,11 +12,15 @@ const reduxConnector = connect(
     state => ({
         subtasks: selectors.getSubtasks(state),
         labels: selectors.getLabels(state),
+        jiraItem: selectors.getJiraItem(state),
     }),
     dispatch => ({
         delSubtask: id => dispatch(actions.delSubtask(id)),
         updSubtask: (id, fields) => dispatch(actions.updSubtask(id, fields)),
-        addSubtask: () => dispatch(actions.addSubtask()),
+        addSubtask: e => {
+            dispatch(actions.addSubtask());
+            e.preventDefault();
+        },
     })
 );
 
@@ -28,20 +32,28 @@ class Subtasks extends Component {
             delSubtask,
             updSubtask,
             addSubtask,
+            jiraItem
         } = this.props;
         return (
             <div className="column subtasks">
-                <h3>Subtasks</h3>
+                <h3>
+                {
+                    false && jiraItem
+                    ? <a title="Open item in new tab in Jira" target="_blank" rel="noopener noreferrer" href={`https://jira.danateq.net/browse/${jiraItem.key}`}>{jiraItem.fields.summary}</a>
+                    : null
+                }
+                Sub-tasks
+                </h3>
                 {subtasks.length ? (
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell className="category">Category</TableCell>
-                            <TableCell className="summary-and-description">Summary and Description</TableCell>
-                            <TableCell className="original-estimate">Original Estimate</TableCell>
-                            <TableCell className="jira-item">Jira Item</TableCell>
-                            <TableCell className="row-status">Record Status</TableCell>
-                            <TableCell className="actions" />
+                            <TableCell className="cell category">Category</TableCell>
+                            <TableCell className="cell summary-and-description">{/*Summary and Description*/}</TableCell>
+                            <TableCell className="cell original-estimate">Estimate</TableCell>
+                            <TableCell className="cell jira-item">Jira Item</TableCell>
+                            <TableCell className="cell row-status">Record Status</TableCell>
+                            <TableCell className="cell actions">Actions</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>

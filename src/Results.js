@@ -7,8 +7,8 @@ import classNames from 'classnames';
 
 // import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
 import { PieChart, Pie, /* Sector, */ Cell, Tooltip } from 'recharts';
-import Button from 'material-ui/Button';
-import SyncIcon from 'material-ui-icons/Sync';
+// import Button from 'material-ui/Button';
+// import SyncIcon from 'material-ui-icons/Sync';
 
 import * as selectors from './selectors';
 import * as actions from './actions';
@@ -35,12 +35,12 @@ const reduxConnector = connect(
     })
 );
 
-const COLORS = [
-    '#0088FE',
-    '#FF8042',
-    '#00C49F',
-    '#FFBB28',
-];
+// const COLORS = [
+//     '#0088FE',
+//     '#FF8042',
+//     '#00C49F',
+//     '#FFBB28',
+// ];
 
 class CustomTooltip extends PureComponent {
     render() {
@@ -92,9 +92,9 @@ class Results extends Component {
                 )}
 
                 <div>
-                    <h3>Subtasks statictics</h3>
+                    <h3>Sub-tasks statistics</h3>
                     <dl className="flexed">
-                        <dt>Total subtasks</dt>
+                        <dt>Total sub-tasks</dt>
                         <dd className="important">{subtasks.length}</dd>
                         <dt>Dirty estimate (with focus factor)</dt>
                         <dd className={classNames('important', { gray: dirtyTotalEstimate === 0 })}>{humanizeDuration(dirtyTotalEstimate)}</dd>
@@ -102,19 +102,18 @@ class Results extends Component {
                         <dd className={classNames({ gray: totalEstimate === 0 })}>{humanizeDuration(totalEstimate)}</dd>
                     </dl>
 
-
                     <h3>Pure Estimate By Category</h3>
                     <div className="pie-chart-container">
                         {chartData.length ? (
                             <PieChart width={200} height={200}>
                                 <Pie dataKey="value" data={chartData} animationDuration={600}>
                                     {
-                                        chartData.map((entry, index) => <Cell key={index} fill={COLORS[index % COLORS.length]}/>)
+                                        chartData.map(({ name }) => <Cell key={name} fill={constants.LABEL_TO_COLOR[name]} />)
                                     }
                                 </Pie>
                                 <Tooltip content={<CustomTooltip />} />
                             </PieChart>
-                        ) : <p className="gray">Add subtasks to see drilldown</p>}
+                        ) : <p className="gray">Add subtasks to see drilldown chart</p>}
                     </div>
 
                     <h3>Main story details</h3>
@@ -133,25 +132,7 @@ class Results extends Component {
                         </dl>
                     ) : <p className="red">Jira item with story is not loaded</p>}
 
-                    <h3>Sync subtasks with Jira</h3>
-                    <div className="vertical-buttons">
-                        <Button
-                            title="Synchronize local changes with Jira"
-                            raised
-                            color="primary"
-                            onClick={syncWithJira}
-                            disabled={!(!isPending && valid && isDirty && jiraItem && subtasks.length)}
-                        >
-                            {/* {toCreate} to create and {toUpdate} to update */}
-                            {/* {toCreate ? `` : null} */}
-                            {/* compact( */[
-                                <SyncIcon />,
-                                toCreate ? `create ${toCreate} item(s)` : null,
-                                toUpdate ? `update ${toUpdate} item(s)` : null,
-                                !toCreate && !toUpdate ? `Syncronize` : null,
-                            ]/* ).join(' and ') */}
-                        </Button>
-                    </div>
+
                 </div>
 
             </div>
@@ -161,3 +142,23 @@ class Results extends Component {
 }
 
 export default reduxConnector(Results);
+
+//<h3>Sync subtasks with Jira</h3>
+//<div className="vertical-buttons">
+//    <Button
+//        title="Synchronize local changes with Jira"
+//        raised
+//        color="primary"
+//        onClick={syncWithJira}
+//        disabled={!(!isPending && valid && isDirty && jiraItem && subtasks.length)}
+//    >
+//        {/* {toCreate} to create and {toUpdate} to update */}
+//        {/* {toCreate ? `` : null} */}
+//        {/* compact( */[
+//            <SyncIcon />,
+//            toCreate ? `create ${toCreate} item(s)` : null,
+//            toUpdate ? `update ${toUpdate} item(s)` : null,
+//            !toCreate && !toUpdate ? `Syncronize` : null,
+//        ]/* ).join(' and ') */}
+//    </Button>
+//</div>

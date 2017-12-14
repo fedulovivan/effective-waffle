@@ -44,7 +44,7 @@ class App extends Component {
 
         return (
             <div className="root">
-                <div style={{ height: "5px" }}>
+                <div className="progress-container">
                     {isPending ? <LinearProgress /> : null}
                 </div>
                 <div className="layout">

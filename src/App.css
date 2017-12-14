@@ -7,18 +7,24 @@ body,
     padding: 0;
 }
 
-.layout {
-    display: flex;
-    justify-content: space-between;
-    /* max-width: 1200px; */
-    /* height: calc(100vh - 10px); */
-    align-items: stretch;
-    /* border: 1px solid #fdd; */
-    margin: 0;
-    padding: 0;
+.progress-container {
+    height: 5px;
+    position: sticky;
+    top: 0;
+    z-index: 999;
 }
 
-.column {
+.layout {
+    display: flex;
+    /* justify-content: space-between; */
+    align-items: stretch;
+    margin: 0;
+    padding: 0;
+    /* flex: 1; */
+}
+
+.layout > .column {
+    flex-shrink: 0;
     padding: 10px;
     /* border: 1px solid #ddd; */
 }
@@ -52,6 +58,7 @@ body,
 }
 
 .column.subtasks {
+    flex: 1;
     overflow-y: auto;
 }
 
@@ -118,35 +125,46 @@ h3 {
     color: rgb(0, 84, 153);
     text-align: center;
     border-bottom: 2px solid rgb(154, 218, 253);
+    margin-bottom: 10px;
+    margin-top: 20px;
 }
 
-th.category {
+p {
+    margin: 0;
+}
+
+.cell {
+    padding: 10px !important;
+    vertical-align: top;
+}
+
+.cell.category {
     width: 80px;
 }
 
-th.summary-and-description {
-
+.cell.summary-and-description {
+    
 }
 
-th.original-estimate {
-    width: 80px;
+.cell.original-estimate {
+    width: 100px;
 }
 
-th.jira-item {
-    width: 80px;
+.cell.jira-item {
+    width: 60px;
 }
 
-th.row-status {
-    width: 80px;
+.cell.row-status {
+    width: 60px;
 }
 
-th.actions {
-    width: 80px;
+.cell.actions {
+    width: 20px;
 }
 
 .summary > input,
-.description > input {
-    width: calc(100vw - 1200px);
+.description textarea {
+    width: calc(100vw - 900px);
 }
 
 .pie-chart-container > * {
@@ -156,4 +174,10 @@ th.actions {
 
 .result .error {
     text-align: center;
+}
+
+.action-buttons {
+    width: 210px;
+    position: fixed;
+    bottom: 0;
 }

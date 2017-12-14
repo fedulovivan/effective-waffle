@@ -9,6 +9,7 @@ import IconButton from 'material-ui/IconButton';
 import Refresh from 'material-ui-icons/Refresh';
 import AddIcon from 'material-ui-icons/Add';
 import DoNotDisturbIcon from 'material-ui-icons/DoNotDisturb';
+import SyncIcon from 'material-ui-icons/Sync';
 
 import * as actions from './actions';
 import * as selectors from './selectors';
@@ -22,6 +23,10 @@ const reduxConnector = connect(
         user: selectors.getUser(state),
         pass: selectors.getPass(state),
         validateGeneral: selectors.validateGeneral(state),
+        syncWithJiraStats: selectors.getSyncWithJiraStats(state),
+        jiraItem: selectors.getJiraItem(state),
+        // isDirty: selectors.isDirty(state),
+        
     }),
     dispatch => ({
         updRootItemKey: rootItemKey => dispatch(actions.updRootItemKey(rootItemKey)),
@@ -31,6 +36,7 @@ const reduxConnector = connect(
         addSubtask: () => dispatch(actions.addSubtask()),
         fetchJiraItem: () => dispatch(actions.fetchJiraItem()),
         discardAll: () => dispatch(actions.discardAll()),
+        syncWithJira: () => dispatch(actions.syncWithJira()),
     })
 );
 
@@ -63,6 +69,9 @@ class General extends Component {
             fetchJiraItem,
             validateGeneral,
             discardAll,
+            syncWithJiraStats,
+            syncWithJira,
+            jiraItem,
         } = this.props;
 
         const getHelperText = (validationResults, fieldName) => {
@@ -76,6 +85,11 @@ class General extends Component {
             const errors = validationResults[fieldName];
             return isArray(errors) && errors.length > 0;
         };
+
+        const {
+            toCreate,
+            toUpdate,
+        } = syncWithJiraStats;
 
         return (
             <div className="column general">
@@ -124,7 +138,7 @@ class General extends Component {
                         error={isError(validateGeneral, 'pass')}
                     />
                 </form>
-                <div className="vertical-buttons">
+                <div className="vertical-buttons action-buttons">
                     <Button
                         raised
                         color="primary"
@@ -132,16 +146,32 @@ class General extends Component {
                     >
                         <AddIcon /> Add subtask
                     </Button>
-                    {/* <Tooltip title="Discard all unsaved changes and re-fetch existing subtatsks from jira"> */}
-                        <Button
-                            title="Discard all unsaved changes and re-fetch existing subtatsks from jira"
-                            raised
-                            color="accent"
-                            disabled={!hasNew && !isDirty}
-                            onClick={discardAll}
-                        >
-                            <DoNotDisturbIcon /> Start over
-                        </Button>
+                    <Button
+                        title="Synchronize local changes with Jira"
+                        raised
+                        color="primary"
+                        onClick={syncWithJira}
+                        disabled={!(isDirty)}
+                    >
+                        {/* {toCreate} to create and {toUpdate} to update */}
+                        {/* {toCreate ? `` : null} */}
+                        {/* compact( */[
+                            <SyncIcon />,
+                            toCreate ? `create ${toCreate} item(s)` : null,
+                            toUpdate ? `update ${toUpdate} item(s)` : null,
+                            !toCreate && !toUpdate ? `Syncronize` : null,
+                        ]/* ).join(' and ') */}
+                    </Button> 
+                    {/* <Tooltip title="foo">                    */}
+                    <Button
+                        title="Discard all unsaved changes and re-fetch existing subtatsks from jira"
+                        raised
+                        color="accent"
+                        disabled={!hasNew && !isDirty}
+                        onClick={discardAll}
+                    >
+                        <DoNotDisturbIcon /> Start over
+                    </Button>
                     {/* </Tooltip> */}
                 </div>
             </div>

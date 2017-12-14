@@ -3,12 +3,15 @@ import parseDuration from 'parse-duration';
 // import { parse } from 'querystring';
 // import moment from 'moment';
 import { get, pick } from 'lodash/object';
-import { each } from 'lodash/collection';
+import { each, sortBy } from 'lodash/collection';
 import * as constants from './constants';
 
 export const getAll = state => state;
 export const getFoo = state => getAll(state).foo;
-export const getSubtasks = state => getAll(state).subtasks;
+export const getSubtasks = state => {
+    const { subtasks } = getAll(state);
+    return sortBy(subtasks, 'id');
+};
 export const getLabels = state => getAll(state).labels;
 export const getRootItemKey = state => getAll(state).rootItemKey;
 export const getJiraItem = state => getAll(state).jiraItem;
@@ -48,7 +51,7 @@ export const getDirtyTotalEstimate = state => {
     const focusFactor = getFocusFactor(state);
     const totalEstimate = getTotalEstimate(state);
     const res = totalEstimate / focusFactor;
-    const presision = 60 * 60 * 1000; // round to nearest hour
+    const presision = 60 * /*60 **/ 1000; // round to nearest hour (MINUTE)
     return Math.round(res / presision) * presision;
 };
 
@@ -94,7 +97,7 @@ export const validateGeneral = state => {
         rootItemKey: {
             format: {
                 pattern: /^(lwb|lnk)-\d+$/i,
-                message: `^should be LWB-xxx or LNK-xxx`,
+                message: `^should be LWB-### or LNK-###`,
             },
         },
         focusFactor: {

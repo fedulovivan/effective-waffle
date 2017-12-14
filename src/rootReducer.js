@@ -31,7 +31,7 @@ export const INITIAL_STATE = {
     rootItemKey: /* 'LWB-4584' *//* null */"", // hackatonteam2 story
     focusFactor: 0.5,
     labels: constants.LABELS,
-    subtaskIdSequence: 0,
+    subtaskIdSequence: 100000, // greater than jira ids
     subtasks: [],
     jiraItem: null,
     fetchJiraItemPending: false,
