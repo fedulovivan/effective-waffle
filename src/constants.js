@@ -34,3 +34,19 @@ LABELS.forEach((label, index) => {
 });
 
 export const LABEL_OTHER = 'OTHER';
+
+export const HUMANISER_OPTS = {
+    units: [/*'y', 'mo',*/'w', 'd', 'h', 'm', 's'],
+    unitMeasures: {
+        //y: 31557600000,
+        //mo: 2629800000, // jira 864000000
+        w: 144000000, // jira 144000000 normal 604800000
+        d: 28800000, // jira 28800000 normal 86400000
+        h: 3600000,
+        m: 60000,
+        s: 1000,
+        ms: 1
+    },
+    largest: 4,
+    round: false,
+};

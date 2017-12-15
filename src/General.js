@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { isArray } from 'lodash/lang';
 
-import Tooltip from 'material-ui/Tooltip';
+// import Tooltip from 'material-ui/Tooltip';
 import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
 import IconButton from 'material-ui/IconButton';
@@ -26,7 +26,7 @@ const reduxConnector = connect(
         syncWithJiraStats: selectors.getSyncWithJiraStats(state),
         jiraItem: selectors.getJiraItem(state),
         // isDirty: selectors.isDirty(state),
-        
+
     }),
     dispatch => ({
         updRootItemKey: rootItemKey => dispatch(actions.updRootItemKey(rootItemKey)),
@@ -71,7 +71,7 @@ class General extends Component {
             discardAll,
             syncWithJiraStats,
             syncWithJira,
-            jiraItem,
+            // jiraItem,
         } = this.props;
 
         const getHelperText = (validationResults, fieldName) => {
@@ -153,17 +153,14 @@ class General extends Component {
                         onClick={syncWithJira}
                         disabled={!(isDirty)}
                     >
-                        {/* {toCreate} to create and {toUpdate} to update */}
-                        {/* {toCreate ? `` : null} */}
-                        {/* compact( */[
-                            <SyncIcon />,
-                            toCreate ? `create ${toCreate} item(s)` : null,
-                            toCreate && toUpdate ? ` and ` : null,
-                            toUpdate ? `update ${toUpdate} item(s)` : null,
-                            !toCreate && !toUpdate ? `Synchronize` : null,
-                        ]/* ).join(' and ') */}
-                    </Button> 
-                    {/* <Tooltip title="foo">                    */}
+                        {[
+                            <SyncIcon key="1" />,
+                            toCreate ? <span key="2">create {toCreate} item(s)</span> : null,
+                            toCreate && toUpdate ? <span key="3"> and </span> : null,
+                            toUpdate ? <span key="4">update {toUpdate} item(s)</span> : null,
+                            !toCreate && !toUpdate ? <span key="5">Synchronize</span> : null,
+                        ]}
+                    </Button>
                     <Button
                         title="Discard all unsaved changes and re-fetch existing subtatsks from jira"
                         raised
@@ -173,7 +170,6 @@ class General extends Component {
                     >
                         <DoNotDisturbIcon /> Start over
                     </Button>
-                    {/* </Tooltip> */}
                 </div>
             </div>
         );

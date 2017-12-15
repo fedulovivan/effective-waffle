@@ -143,7 +143,7 @@ p {
 }
 
 .cell.summary-and-description {
-    
+
 }
 
 .cell.original-estimate {
@@ -180,4 +180,13 @@ p {
     width: 210px;
     position: fixed;
     bottom: 0;
+}
+
+button.link {
+    border: 0;
+    background: none;
+    font-size: 1em;
+    padding: 0;
+    text-decoration: underline;
+    cursor: pointer;
 }

@@ -50,12 +50,15 @@
         "react/prefer-stateless-function": "off",
         "arrow-parens": "off",
         "arrow-body-style": "off",
-        "function-paren-newline": "off"
+        "function-paren-newline": "off",
+        "jsx-a11y/href-no-hash": "off",
+        "jsx-a11y/anchor-is-valid": "off"
     },
     "plugins": [
         "react",
-        "import",
-        "disable"
+        "import"
+        //,
+        //"disable"
     ],
     "settings": {
         "import/parser": "babel-eslint",
@@ -64,20 +67,21 @@
                 "node_modules",
                 "src"
             ]
-        },
-        "eslint-plugin-disable": {
-            "paths": {
-                "jsx-a11y/*": ["*"]
-            }
         }
+        //,
+        //"eslint-plugin-disable": {
+        //    "paths": {
+        //        "jsx-a11y/*": ["*"]
+        //    }
+        //}
     },
     "globals": {
-        "__DEVELOPMENT__": true,
-        "__CLIENT__": true,
-        "__SERVER__": true,
-        "__DISABLE_SSR__": true,
-        "__DEVTOOLS__": true,
-        "socket": true,
-        "webpackIsomorphicTools": true
+        // "__DEVELOPMENT__": true,
+        // "__CLIENT__": true,
+        // "__SERVER__": true,
+        // "__DISABLE_SSR__": true,
+        // "__DEVTOOLS__": true,
+        // "socket": true,
+        // "webpackIsomorphicTools": true
     }
 }

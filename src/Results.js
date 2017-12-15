@@ -1,12 +1,12 @@
-import React, { Component, PureComponent } from 'react';
+import React, { Component/* , PureComponent */ } from 'react';
 import { connect } from 'react-redux';
 import humanizeDuration from 'humanize-duration';
-import { map/* , size */ } from 'lodash/collection';
-import { compact } from 'lodash/array';
+// import { map/* , size */ } from 'lodash/collection';
+// import { compact } from 'lodash/array';
 import classNames from 'classnames';
 
 // import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
-import { PieChart, Pie, /* Sector, */ Cell, Tooltip } from 'recharts';
+// import { PieChart, Pie, /* Sector, */ Cell, Tooltip } from 'recharts';
 // import Button from 'material-ui/Button';
 // import SyncIcon from 'material-ui-icons/Sync';
 
@@ -15,22 +15,7 @@ import * as actions from './actions';
 import * as constants from './constants';
 
 import None from './None';
-
-const humaniserOpts = {
-    units: [/*'y', 'mo',*/'w', 'd', 'h', 'm', 's'],
-    unitMeasures: {
-        //y: 31557600000,
-        //mo: 2629800000, // jira 864000000
-        w: 144000000, // jira 144000000 normal 604800000
-        d: 28800000, // jira 28800000 normal 86400000
-        h: 3600000,
-        m: 60000,
-        s: 1000,
-        ms: 1
-    },
-    largest: 4, 
-    round: false,
-};
+import Drilldown from './Drilldown';
 
 const reduxConnector = connect(
     state => ({
@@ -58,20 +43,10 @@ const reduxConnector = connect(
 //     '#FFBB28',
 // ];
 
-class CustomTooltip extends PureComponent {
-    render() {
-        const {
-            payload,
-        } = this.props;
-        return payload && payload[0] ? (
-            <div>
-                {payload[0].name}: {humanizeDuration(payload[0].value, humaniserOpts)}
-            </div>
-        ) : null;
-    }
-}
-
 class Results extends Component {
+
+    // onClickCell = (a, b, c) => console.log(/* { a, b, c } */a.target, a.currentTarget);
+
     render() {
         const {
             subtasks,
@@ -80,22 +55,22 @@ class Results extends Component {
             error,
             totalEstimate,
             dirtyTotalEstimate,
-            totalEstimateByLabel,
-            syncWithJira,
-            isPending,
-            valid,
-            isDirty,
-            syncWithJiraStats,
+            // totalEstimateByLabel,
+            // syncWithJira,
+            // isPending,
+            // valid,
+            // isDirty,
+            // syncWithJiraStats,
         } = this.props;
 
-        const chartData = map(totalEstimateByLabel, (value, name) => {
-            return { name, value };
-        });
+        // const chartData = map(totalEstimateByLabel, (value, name) => {
+        //     return { name, value };
+        // });
 
-        const {
+        /* const {
             toCreate,
             toUpdate,
-        } = syncWithJiraStats;
+        } = syncWithJiraStats; */
 
         return (
             <div className="column result">
@@ -113,24 +88,13 @@ class Results extends Component {
                         <dt>Total sub-tasks</dt>
                         <dd className="important">{subtasks.length}</dd>
                         <dt>Dirty estimate (with focus factor)</dt>
-                        <dd className={classNames('important', { gray: dirtyTotalEstimate === 0 })}>{humanizeDuration(dirtyTotalEstimate, humaniserOpts)}</dd>
+                        <dd className={classNames('important', { gray: dirtyTotalEstimate === 0 })}>{humanizeDuration(dirtyTotalEstimate, constants.HUMANISER_OPTS)}</dd>
                         <dt>Pure estimate</dt>
-                        <dd className={classNames({ gray: totalEstimate === 0 })}>{humanizeDuration(totalEstimate, humaniserOpts)}</dd>
+                        <dd className={classNames({ gray: totalEstimate === 0 })}>{humanizeDuration(totalEstimate, constants.HUMANISER_OPTS)}</dd>
                     </dl>
 
                     <h3>Pure Estimate By Category</h3>
-                    <div className="pie-chart-container">
-                        {chartData.length ? (
-                            <PieChart width={200} height={200}>
-                                <Pie dataKey="value" data={chartData} animationDuration={600}>
-                                    {
-                                        chartData.map(({ name }) => <Cell key={name} fill={constants.LABEL_TO_COLOR[name]} />)
-                                    }
-                                </Pie>
-                                <Tooltip content={<CustomTooltip />} />
-                            </PieChart>
-                        ) : <p className="gray">Add subtasks to see drilldown chart</p>}
-                    </div>
+                    <Drilldown />
 
                     <h3>Main story details</h3>
                     {jiraItem ? (

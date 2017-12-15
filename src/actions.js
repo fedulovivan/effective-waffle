@@ -51,23 +51,47 @@ export const initFromJiraItem = rawSubtasks => ({
     payload: { rawSubtasks }
 });
 
+export const fetchStatuses = () => async function(dispatch, getState, api) {
+    const state = getState();
+    const url = `/status`;
+    const token = selectors.getBasicAuthToken(state);
+    dispatch({
+        type: actionTypes.FETCH_STATUSES_PENDING
+    });
+    try {
+        const responseJson = await doRequest(token, url, 'GET');
+        dispatch({
+            type: actionTypes.FETCH_STATUSES_SUCCESS,
+            payload: { responseJson },
+        });
+    } catch (error) {
+        dispatch({
+            type: actionTypes.FETCH_STATUSES_FAIL,
+            payload: { error: serializeError(error) }
+        });
+    }
+};
+
 export const fetchSubtasks = () => async function(dispatch, getState, api) {
     const state = getState();
     const rootItemKey = selectors.getRootItemKey(state);
     const token = selectors.getBasicAuthToken(state);
     const url = `/search?jql=parent=${rootItemKey}`;
+    dispatch({
+        type: actionTypes.FETCH_SUBTASKS_PENDING
+    });
     try {
         const responseJson = await doRequest(token, url, 'GET');
-        // dispatch({
-        //     type: actionTypes.FETCH_JIRA_ITEM_SUCCESS,
-        //     payload: { jiraItem: responseJson }
-        // });
+        dispatch({
+            type: actionTypes.FETCH_SUBTASKS_SUCCESS,
+            payload: { responseJson },
+        });
         dispatch(initFromJiraItem(responseJson));
     } catch (error) {
-        // dispatch({
-        //     type: actionTypes.FETCH_JIRA_ITEM_FAIL,
-        //     payload: { error: serializeError(error) }
-        // });
+        dispatch({
+            type: actionTypes.FETCH_SUBTASKS_FAIL,
+            payload: { error: serializeError(error) }
+        });
     }
 };
 

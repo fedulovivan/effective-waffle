@@ -2,7 +2,7 @@
 import humanizeDuration from 'humanize-duration';
 
 import { isNil } from 'lodash/lang';
-import { each } from 'lodash/collection';
+// import { each } from 'lodash/collection';
 import * as actionTypes from './actionTypes';
 import * as constants from './constants';
 
@@ -32,7 +32,7 @@ const shortEnglishHumanizer = humanizeDuration.humanizer({
         ms: 1
     }
 });
-  
+
 // import { debug } from 'util';
 // import * as selectors from './selectors';
 // console.log(config.get('labels'));
@@ -65,6 +65,7 @@ export const INITIAL_STATE = {
     fetchJiraItemPending: false,
     createSubtaskPending: false,
     updSubtaskPending: false,
+    fetchStatusesPending: false,
     lastNewLabel: constants.LABEL_OTHER,
     error: null,
     user: '',
@@ -271,6 +272,48 @@ const rootReducer = function(state/* = INITIAL_STATE*/, action) {
             return {
                 ...state,
                 subtasks: []
+            };
+        }
+        case actionTypes.FETCH_STATUSES_PENDING: {
+            return {
+                ...state,
+                fetchStatusesPending: true,
+            };
+        }
+        case actionTypes.FETCH_STATUSES_SUCCESS: {
+            const { responseJson: statuses } = payload;
+            return {
+                ...state,
+                fetchStatusesPending: false,
+                statuses,
+            };
+        }
+        case actionTypes.FETCH_STATUSES_FAIL: {
+            const { error } = payload;
+            return {
+                ...state,
+                fetchStatusesPending: false,
+                error,
+            };
+        }
+        case actionTypes.FETCH_SUBTASKS_PENDING: {
+            return {
+                ...state,
+                fetchSubtasksPending: true,
+            };
+        }
+        case actionTypes.FETCH_SUBTASKS_SUCCESS: {
+            return {
+                ...state,
+                fetchSubtasksPending: false,
+            };
+        }
+        case actionTypes.FETCH_SUBTASKS_FAIL: {
+            const { error } = payload;
+            return {
+                ...state,
+                fetchSubtasksPending: false,
+                error,
             };
         }
         default:

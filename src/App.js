@@ -19,6 +19,7 @@ const reduxConnector = connect(
     }),
     dispatch => ({
         fetchJiraItem: () => dispatch(actions.fetchJiraItem()),
+        fetchStatuses: () => dispatch(actions.fetchStatuses()),
     })
 );
 
@@ -26,15 +27,18 @@ class App extends Component {
 
     componentDidMount() {
         const {
-            // rootItemKey,
-            // isDirty,
-            // hasNew,
             fetchJiraItem,
             isGeneralValid,
+            fetchStatuses,
         } = this.props;
-        if (/* rootItemKey && !isDirty && !hasNew &&  */isGeneralValid) {
+        if (isGeneralValid) {
             fetchJiraItem();
         }
+        fetchStatuses();
+        // rootItemKey,
+        // isDirty,
+        // hasNew,
+        /* rootItemKey && !isDirty && !hasNew &&  */
     }
 
     render() {
@@ -45,7 +49,11 @@ class App extends Component {
         return (
             <div className="root">
                 <div className="progress-container">
-                    {isPending ? <LinearProgress /> : null}
+                    {
+                        isPending
+                        ? <LinearProgress />
+                        : null
+                    }
                 </div>
                 <div className="layout">
                     <General />

@@ -36,7 +36,7 @@ export const getTotalEstimate = state => {
 
 export const getTotalEstimateByLabel = state => {
     const subtasks = getSubtasks(state);
-    const focusFactor = getFocusFactor(state);
+    // const focusFactor = getFocusFactor(state);
     return subtasks.reduce((memo, { estimate, label }) => {
         if (!memo[label]) memo[label] = 0;
         try {
