@@ -1,5 +1,5 @@
 import serializeError from 'serialize-error';
-import { /* each, */ map } from 'lodash/collection';
+import { map } from 'lodash/collection';
 import { compact } from 'lodash/array';
 import humanizeDuration from 'humanize-duration';
 
@@ -39,14 +39,6 @@ async function doRequest(token, apiUrl, method, payload) {
         throw e;
     }
 }
-
-// export function incFoo() {
-//     return { type: actionTypes.INC_FOO };
-// }
-
-// export function decFoo() {
-//     return { type: actionTypes.DEC_FOO };
-// }
 
 export const initFromJiraItem = rawSubtasks => ({
     type: actionTypes.INIT_FROM_JIRA_ITEM,
@@ -126,14 +118,13 @@ export const discardAll = () => async function(dispatch, getState, api) {
     dispatch({
         type: actionTypes.DISCARD_ALL
     });
-    // localStorage.setItem(constants.NAME, "{}");
     dispatch(fetchJiraItem());
 };
 
 export const updLabelFilter = value => ({
     type: actionTypes.UPD_LABEL_FILTER,
     payload: { value },
-})
+});
 
 export const updateSubtask = (task) => async function(dispatch, getState, api) {
     const state = getState();

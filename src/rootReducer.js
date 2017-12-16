@@ -1,10 +1,7 @@
-// import humanizeDuration from 'humanize-duration';
-
 import { isNil } from 'lodash/lang';
 import { keyBy } from 'lodash/collection';
 import * as actionTypes from './actionTypes';
 import * as constants from './constants';
-
 
 const EMPTY_SUBTASK = {
     summary: '',
@@ -17,7 +14,6 @@ const EMPTY_SUBTASK = {
 const isValidLabel = label => constants.LABELS.includes(label);
 
 export const INITIAL_STATE = {
-    // foo: 1,
     rootItemKey: '',
     focusFactor: 0.5,
     labels: constants.LABELS,
@@ -34,21 +30,12 @@ export const INITIAL_STATE = {
     pass: '',
     statuses: {},
     labelFilter: 'all',
+    snackbarMessage: 'Foo',
 };
 
 const rootReducer = function(state = {}, action) {
     const { type, payload } = action;
     switch (type) {
-        // case actionTypes.INC_FOO:
-        //     return {
-        //         ...state,
-        //         foo: state.foo + 1,
-        //     };
-        // case actionTypes.DEC_FOO:
-        //     return {
-        //         ...state,
-        //         foo: state.foo - 1,
-        //     };
         case actionTypes.ADD_SUBTASK:
             const subtaskIdSequence = state.subtaskIdSequence + 1;
             return {
@@ -94,8 +81,6 @@ const rootReducer = function(state = {}, action) {
 
             const { rawSubtasks: { issues: subtasks } } = payload;
 
-            //const origSubtasks = state.subtasks;
-
             // keep all new as is
             const newStateSubtasks = state.subtasks.filter(({ key, dirty }) => !key || dirty);
 
@@ -110,8 +95,6 @@ const rootReducer = function(state = {}, action) {
                 const candidateLabel = canExtractLabel && smatches[1].toUpperCase();
                 const isValid = isValidLabel(candidateLabel);
 
-                //EMPTY_SUBTASK
-
                 newStateSubtasks.push({
                     ...EMPTY_SUBTASK,
                     ...{
@@ -119,7 +102,7 @@ const rootReducer = function(state = {}, action) {
                         label: isValid ? candidateLabel : constants.LABEL_OTHER,
                         summary: canExtractLabel ? smatches[2] : summary,
                         description: isNil(description) ? "" : description,
-                        estimate: /* humanizeDuration( */timeoriginalestimate * 1000/*, constants.HUMANISER_OPTS),*/,
+                        estimate: timeoriginalestimate * 1000,
                         dirty: false,
                         key,
                         status,
@@ -243,7 +226,8 @@ const rootReducer = function(state = {}, action) {
         case actionTypes.DISCARD_ALL: {
             return {
                 ...state,
-                subtasks: []
+                subtasks: [],
+                labelFilter: 'all',
             };
         }
         case actionTypes.FETCH_STATUSES_PENDING: {

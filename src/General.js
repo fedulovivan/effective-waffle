@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { isArray } from 'lodash/lang';
 
-// import Tooltip from 'material-ui/Tooltip';
 import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
 import IconButton from 'material-ui/IconButton';
@@ -25,8 +24,6 @@ const reduxConnector = connect(
         validateGeneral: selectors.validateGeneral(state),
         syncWithJiraStats: selectors.getSyncWithJiraStats(state),
         jiraItem: selectors.getJiraItem(state),
-        // isDirty: selectors.isDirty(state),
-
     }),
     dispatch => ({
         updRootItemKey: rootItemKey => dispatch(actions.updRootItemKey(rootItemKey)),
@@ -35,7 +32,11 @@ const reduxConnector = connect(
         updPass: val => dispatch(actions.updPass(val)),
         addSubtask: () => dispatch(actions.addSubtask()),
         fetchJiraItem: () => dispatch(actions.fetchJiraItem()),
-        discardAll: () => dispatch(actions.discardAll()),
+        discardAll: () => {
+            if (window.confirm(`Please confirm`)) {
+                dispatch(actions.discardAll());
+            }
+        },
         syncWithJira: () => dispatch(actions.syncWithJira()),
     })
 );
@@ -97,7 +98,7 @@ class General extends Component {
                 <form>
                     <div className="story">
                         <TextField
-                            // disabled={hasNew || isDirty}
+                            disabled={hasNew || isDirty}
                             value={rootItemKey}
                             label="Main Story"
                             onChange={this.handleRootItemKeyChange}
@@ -105,9 +106,9 @@ class General extends Component {
                             error={isError(validateGeneral, 'rootItemKey')}
                         />
                         <IconButton
-                            // disabled={hasNew || isDirty}
                             aria-label="Re-fetch"
                             title="Reload items from jira"
+                            disabled={hasNew || isDirty}
                         >
                             <Refresh onClick={fetchJiraItem} />
                         </IconButton>

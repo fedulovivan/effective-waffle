@@ -35,17 +35,10 @@ class Subtasks extends Component {
             updSubtask,
             addSubtask,
             statuses,
-            // labelFilter,
-            // jiraItem,
         } = this.props;
         return (
             <div className="column subtasks">
                 <h3>
-                {
-                    /*jiraItem
-                    ? <a title="Open item in new tab in Jira" target="_blank" rel="noopener noreferrer" href={`https://jira.danateq.net/browse/${jiraItem.key}`}>{jiraItem.fields.summary}</a>
-                    : null*/
-                }
                 Sub-tasks
                 </h3>
                 {

@@ -1,7 +1,7 @@
-import { map/* , size */ } from 'lodash/collection';
+import { map } from 'lodash/collection';
 import { connect } from 'react-redux';
 import React, { Component, PureComponent } from 'react';
-import { PieChart, Pie, /* Sector, */ Cell, Tooltip } from 'recharts';
+import { PieChart, Pie, Cell, Tooltip } from 'recharts';
 import humanizeDuration from 'humanize-duration';
 import Select from 'material-ui/Select';
 import { MenuItem } from 'material-ui/Menu';
@@ -16,16 +16,6 @@ const reduxConnector = connect(
     state => ({
         totalEstimateByLabel: selectors.getTotalEstimateByLabel(state),
         labelFilter: selectors.getLabelFilter(state),
-        // subtasks: selectors.getSubtasks(state),
-        // jiraItem: selectors.getJiraItem(state),
-        // rndDevName: selectors.getRndDevName(state),
-        // error: selectors.getError(state),
-        // totalEstimate: selectors.getTotalEstimate(state),
-        // dirtyTotalEstimate: selectors.getDirtyTotalEstimate(state),
-        // isDirty: selectors.isDirty(state),
-        // valid: selectors.valid(state),
-        // isPending: selectors.isPending(state),
-        // syncWithJiraStats: selectors.getSyncWithJiraStats(state),
     }),
     dispatch => ({
         updLabelFilter: value => dispatch(actions.updLabelFilter(value)),
@@ -47,43 +37,7 @@ class CustomTooltip extends PureComponent {
 }
 
 class ActionCell extends Cell {
-    //onClickCell = (a, b, c) => console.log(/* { a, b, c } */a.target, a.currentTarget);
 
-    // constructor(props) {
-    //     super();
-    // }
-
-    //     // console.log(props);
-    // //     //props.fill = constants.LABEL_TO_COLOR[props.name];
-    //     super(/* props */);
-
-    // //     // const {
-    // //     //     name
-    // //     // } = this.props;
-    // }
-    // render() {
-    //     const {
-    //         name
-    //     } = this.props;
-    //     // return null;
-    //     // return (
-    //     //     // <Cell
-    //     //     //     // key={name}
-    //     //     //
-    //     //     //     onClick={this.onClickCell}
-    //     //     // />
-    //     // );
-    // }
-    // render() {
-        // const { props } = this;
-        // // const { name } = this.props;
-        // // const props = {
-        // //     fill: constants.LABEL_TO_COLOR[name]
-        // // };
-        // console.log(props);
-        // return <Cell {...props} />;
-        // return null;
-    // }
 }
 
 class Drilldown extends Component {

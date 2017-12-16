@@ -5,10 +5,7 @@
  */
 export const parseDuration = function(str) {
 
-
     var duration = /(-?\d*\.?\d+(?:e[-+]?\d+)?)\s*([a-zμ]*)/ig
-
-    //module.exports = parse
 
     /**
      * conversion ratios

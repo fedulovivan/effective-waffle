@@ -1,7 +1,9 @@
+import { createSelector } from 'reselect';
 import validate from 'validate.js';
 import { isNil } from 'lodash/lang';
 import { get, pick } from 'lodash/object';
 import { each, sortBy, map } from 'lodash/collection';
+
 import * as constants from './constants';
 
 export const getAll = state => state;
@@ -49,6 +51,7 @@ export const getUser = state => getAll(state).user;
 export const getPass = state => getAll(state).pass;
 export const getLastNewLabel = state => getAll(state).lastNewLabel;
 export const getStatuses = state => getAll(state).statuses;
+export const getSnackbarMessage = state => getAll(state).snackbarMessage;
 
 export const getTotalEstimate = state => {
     const subtasks = getFilteredSubtasks(state);

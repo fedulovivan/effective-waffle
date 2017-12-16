@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { LinearProgress } from 'material-ui/Progress';
+import Snackbar from 'material-ui/Snackbar';
 import './App.css';
 import * as actions from './actions';
 import * as selectors from './selectors';
@@ -16,6 +17,7 @@ const reduxConnector = connect(
         hasNew: selectors.hasNew(state),
         isPending: selectors.isPending(state),
         isGeneralValid: selectors.isGeneralValid(state),
+        snackbarMessage: selectors.getSnackbarMessage(state),
     }),
     dispatch => ({
         fetchJiraItem: () => dispatch(actions.fetchJiraItem()),
@@ -35,15 +37,12 @@ class App extends Component {
             fetchJiraItem();
         }
         fetchStatuses();
-        // rootItemKey,
-        // isDirty,
-        // hasNew,
-        /* rootItemKey && !isDirty && !hasNew &&  */
     }
 
     render() {
         const {
             isPending,
+            snackbarMessage,
         } = this.props;
 
         return (
@@ -60,6 +59,11 @@ class App extends Component {
                     <Subtasks />
                     <Results />
                 </div>
+                {/* <Snackbar
+                    message={<span>{snackbarMessage}</span>}
+                    autoHideDuration={300}
+                    open
+                /> */}
             </div>
         );
     }

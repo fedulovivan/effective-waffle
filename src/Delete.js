@@ -1,5 +1,5 @@
 import DeleteIcon from 'material-ui-icons/Delete';
-import React, { /* Component, */ PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 import IconButton from 'material-ui/IconButton';
 
 

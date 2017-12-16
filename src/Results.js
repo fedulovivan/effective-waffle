@@ -1,14 +1,7 @@
-import React, { Component/* , PureComponent */ } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import humanizeDuration from 'humanize-duration';
-// import { map/* , size */ } from 'lodash/collection';
-// import { compact } from 'lodash/array';
 import classNames from 'classnames';
-
-// import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
-// import { PieChart, Pie, /* Sector, */ Cell, Tooltip } from 'recharts';
-// import Button from 'material-ui/Button';
-// import SyncIcon from 'material-ui-icons/Sync';
 
 import * as selectors from './selectors';
 import * as actions from './actions';
@@ -27,7 +20,6 @@ const reduxConnector = connect(
         dirtyTotalEstimate: selectors.getDirtyTotalEstimate(state),
         totalEstimateByLabel: selectors.getTotalEstimateByLabel(state),
         isDirty: selectors.isDirty(state),
-        // valid: selectors.valid(state),
         isPending: selectors.isPending(state),
         syncWithJiraStats: selectors.getSyncWithJiraStats(state),
     }),
@@ -36,16 +28,7 @@ const reduxConnector = connect(
     })
 );
 
-// const COLORS = [
-//     '#0088FE',
-//     '#FF8042',
-//     '#00C49F',
-//     '#FFBB28',
-// ];
-
 class Results extends Component {
-
-    // onClickCell = (a, b, c) => console.log(/* { a, b, c } */a.target, a.currentTarget);
 
     render() {
         const {
@@ -55,22 +38,7 @@ class Results extends Component {
             error,
             totalEstimate,
             dirtyTotalEstimate,
-            // totalEstimateByLabel,
-            // syncWithJira,
-            // isPending,
-            // valid,
-            // isDirty,
-            // syncWithJiraStats,
         } = this.props;
-
-        // const chartData = map(totalEstimateByLabel, (value, name) => {
-        //     return { name, value };
-        // });
-
-        /* const {
-            toCreate,
-            toUpdate,
-        } = syncWithJiraStats; */
 
         return (
             <div className="column result">
@@ -113,7 +81,7 @@ class Results extends Component {
                             <dt>R&D Division name</dt>
                             <dd>{rndDevName || <None />}</dd>
                             <dt>Project</dt>
-                            <dd>{jiraItem.fields.project.key} ({jiraItem.fields.project.name})</dd>
+                            <dd>{jiraItem.fields.project.key}</dd>
                         </dl>
                     ) : <p className="red">Jira item with story is not loaded</p>}
 

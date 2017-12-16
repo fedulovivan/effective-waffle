@@ -1,6 +1,6 @@
 import thunk from 'redux-thunk';
 import { debounce } from 'lodash/function';
-import { /* omit, */ pick } from 'lodash/object';
+import { pick } from 'lodash/object';
 import { createStore, applyMiddleware, compose } from 'redux';
 
 import rootReducer, { INITIAL_STATE } from './rootReducer';

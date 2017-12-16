@@ -16,17 +16,14 @@ body,
 
 .layout {
     display: flex;
-    /* justify-content: space-between; */
     align-items: stretch;
     margin: 0;
     padding: 0;
-    /* flex: 1; */
 }
 
 .layout > .column {
     flex-shrink: 0;
     padding: 10px;
-    /* border: 1px solid #ddd; */
 }
 
 .vertical-buttons  button {
@@ -99,17 +96,12 @@ dl.flexed > * {
 }
 
 dl.flexed > dt {
-    /* align-self: flex-start; */
     color: gray;
-    /* border: 1px solid green; */
     text-align: right;
     width: 45%;
-
 }
 
 dl.flexed > dd {
-    /* align-self: flex-end; */
-    /* border: 1px solid blue; */
     width: 45%;
     padding-left: 10px;
 }
@@ -168,8 +160,6 @@ p {
 }
 
 .pie-chart-container > * {
-    /* margin: auto; */
-    /* text-align: center; */
     display: flex;
     flex-direction: column;
 }
@@ -194,7 +184,6 @@ button.link {
 }
 
 tr.invalid {
-    /* background-color: #FFEBEE; */
     background: repeating-linear-gradient(
         -45deg,
         #ffffff,
@@ -205,7 +194,6 @@ tr.invalid {
 }
 
 tr.dirty {
-    /* background-color: #E8F5E9; */
     background: repeating-linear-gradient(
         -45deg,
         #ffffff,
@@ -216,7 +204,6 @@ tr.dirty {
 }
 
 tr.verynew {
-    /* background-color: #F5F5F5; */
     background: repeating-linear-gradient(
         -45deg,
         #ffffff,

@@ -1,17 +1,15 @@
 import humanizeDuration from 'humanize-duration';
-import React, { /* Component, */ PureComponent } from 'react';
-import /* Table, */ { /* TableBody, , TableHead, */TableCell, TableRow } from 'material-ui/Table';
+import React, { PureComponent } from 'react';
+import { TableCell, TableRow } from 'material-ui/Table';
 import Select from 'material-ui/Select';
 import { MenuItem } from 'material-ui/Menu';
-import Input/* , { InputLabel } */ from 'material-ui/Input';
+import Input from 'material-ui/Input';
 import classNames from 'classnames';
 
 import { parseDuration } from './utils';
 import None from './None';
 import Delete from './Delete';
 import * as constants from './constants';
-// import { compact } from 'lodash/array';
-// import DeleteIcon from 'material-ui-icons/Delete';
 
 export default class Row extends PureComponent {
 
@@ -22,18 +20,9 @@ export default class Row extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            //...this.state,
             estimateRaw: humanizeDuration(this.props.task.estimate, constants.HUMANISER_OPTS),
         };
     }
-
-    // state = {
-    //     estimateRaw: ''
-    // };
-
-    // componentWillMount() {
-
-    // }
 
     handleSubtaskFieldChange = (name, value) => {
         this.props.updSubtask(this.props.task.id, { [name]: value });
@@ -48,7 +37,7 @@ export default class Row extends PureComponent {
             ...this.state,
             estimateRaw,
         });
-        this.handleSubtaskFieldChange('estimate', /* parseInt(estimateRaw, 10) */parseDuration(estimateRaw));
+        this.handleSubtaskFieldChange('estimate', parseDuration(estimateRaw));
     };
     handleEstimateBlur = e => {
         this.setState({
@@ -65,10 +54,8 @@ export default class Row extends PureComponent {
             statuses,
         } = this.props;
         const {
-            // id,
             label,
             summary,
-            // estimate,
             key,
             dirty,
             description,
@@ -78,7 +65,6 @@ export default class Row extends PureComponent {
             errors,
         } = task;
 
-        // const cellStyle = { /*padding: 0*/ };
         const statusDictElement = statuses[status];
 
         return (
@@ -88,7 +74,7 @@ export default class Row extends PureComponent {
             >
                 <TableCell className="cell category" >
                     <Select
-                        style={{ backgroundColor: constants.LABEL_TO_COLOR[label], padding: "3px" }}
+                        style={{ width: '90px', backgroundColor: constants.LABEL_TO_COLOR[label], padding: "3px" }}
                         value={label}
                         onChange={this.handleLabelChange}
                     >
@@ -114,7 +100,7 @@ export default class Row extends PureComponent {
                 </TableCell>
                 <TableCell className="cell original-estimate" >
                     <Input
-                        value={/*humanizeDuration(estimate, constants.HUMANISER_OPTS)*/this.state.estimateRaw}
+                        value={this.state.estimateRaw}
                         onChange={this.handleEstimateChange}
                         onBlur={this.handleEstimateBlur}
                     />

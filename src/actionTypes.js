@@ -1,5 +1,3 @@
-// export const INC_FOO = 'INC_FOO';
-// export const DEC_FOO = 'DEC_FOO';
 export const ADD_SUBTASK = 'ADD_SUBTASK';
 export const UPD_SUBTASK = 'UPD_SUBTASK';
 export const DEL_SUBTASK = 'DEL_SUBTASK';
