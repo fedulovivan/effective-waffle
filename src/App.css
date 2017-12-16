@@ -164,7 +164,7 @@ p {
 
 .summary > input,
 .description textarea {
-    width: calc(100vw - 900px);
+    width: calc(100vw - 1000px);
 }
 
 .pie-chart-container > * {

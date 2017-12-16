@@ -14,7 +14,6 @@ export const LABELS = [
     'OTHER',
 ];
 
-
 // https://materialuicolors.co/
 export const COLORS = [
     '#FFD54F',
@@ -26,6 +25,7 @@ export const COLORS = [
     '#A1887F',
     '#BA68C8',
     '#4DB6AC',
+    '#FFB74D'
 ];
 
 export const LABEL_TO_COLOR = {};
@@ -47,6 +47,25 @@ export const HUMANISER_OPTS = {
         s: 1000,
         ms: 1
     },
-    largest: 4,
-    round: false,
+    // largest: 4,
+    round: true,
+
+    language: 'shortEn',
+
+    languages: {
+        shortEn: {
+            //y: () => 'y',
+            //mo: () => 'mo',
+            w: () => 'w',
+            d: () => 'd',
+            h: () => 'h',
+            m: () => 'm',
+            s: () => 's',
+            //ms: () => 'ms',
+        }
+    },
+
+    spacer: '',
+    delimiter: ' ',
+
 };

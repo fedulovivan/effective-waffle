@@ -74,23 +74,28 @@ class Results extends Component {
 
         return (
             <div className="column result">
-
-                {error && (
-                    <div>
-                        <h3>Error</h3>
-                        <p className="red error">{ error.message || JSON.stringify(error.jiraErrors) }</p>
-                    </div>
-                )}
-
+                {
+                    error 
+                    && (
+                        <div>
+                            <h3>Error</h3>
+                            <p className="red error">{ error.message || JSON.stringify(error.jiraErrors) }</p>
+                        </div>
+                    )
+                }
                 <div>
                     <h3>Sub-tasks statistics</h3>
                     <dl className="flexed">
                         <dt>Total sub-tasks</dt>
                         <dd className="important">{subtasks.length}</dd>
                         <dt>Dirty estimate (with focus factor)</dt>
-                        <dd className={classNames('important', { gray: dirtyTotalEstimate === 0 })}>{humanizeDuration(dirtyTotalEstimate, constants.HUMANISER_OPTS)}</dd>
+                        <dd className={classNames('important', { gray: dirtyTotalEstimate === 0 })}>
+                            {humanizeDuration(dirtyTotalEstimate, constants.HUMANISER_OPTS)}
+                        </dd>
                         <dt>Pure estimate</dt>
-                        <dd className={classNames({ gray: totalEstimate === 0 })}>{humanizeDuration(totalEstimate, constants.HUMANISER_OPTS)}</dd>
+                        <dd className={classNames({ gray: totalEstimate === 0 })}>
+                            {humanizeDuration(totalEstimate, constants.HUMANISER_OPTS)}
+                        </dd>
                     </dl>
 
                     <h3>Pure Estimate By Category</h3>

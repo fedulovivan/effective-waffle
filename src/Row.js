@@ -1,19 +1,38 @@
+import humanizeDuration from 'humanize-duration';
 import React, { /* Component, */ PureComponent } from 'react';
 import /* Table, */ { /* TableBody, , TableHead, */TableCell, TableRow } from 'material-ui/Table';
 import Select from 'material-ui/Select';
 import { MenuItem } from 'material-ui/Menu';
 import Input/* , { InputLabel } */ from 'material-ui/Input';
-// import { compact } from 'lodash/array';
-// import DeleteIcon from 'material-ui-icons/Delete';
+
+import { parseDuration } from './utils';
 import None from './None';
 import Delete from './Delete';
 import * as constants from './constants';
+// import { compact } from 'lodash/array';
+// import DeleteIcon from 'material-ui-icons/Delete';
 
 export default class Row extends PureComponent {
 
     static defaultProps = {
         description: ""
     };
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            //...this.state,
+            estimateRaw: humanizeDuration(this.props.task.estimate, constants.HUMANISER_OPTS),
+        };
+    }
+
+    // state = {
+    //     estimateRaw: ''
+    // };
+
+    // componentWillMount() {
+
+    // }
 
     handleSubtaskFieldChange = (name, value) => {
         this.props.updSubtask(this.props.task.id, { [name]: value });
@@ -22,25 +41,42 @@ export default class Row extends PureComponent {
     handleLabelChange = e => this.handleSubtaskFieldChange('label', e.target.value);
     handleSummaryChange = e => this.handleSubtaskFieldChange('summary', e.target.value);
     handleDescriptionChange = e => this.handleSubtaskFieldChange('description', e.target.value);
-    handleEstimateChange = e => this.handleSubtaskFieldChange('estimate', e.target.value);
+    handleEstimateChange = e => {
+        const estimateRaw = e.target.value;
+        this.setState({
+            ...this.state,
+            estimateRaw,
+        });
+        this.handleSubtaskFieldChange('estimate', /* parseInt(estimateRaw, 10) */parseDuration(estimateRaw));
+    };
+    handleEstimateBlur = e => {
+        this.setState({
+            ...this.state,
+            estimateRaw: humanizeDuration(this.props.task.estimate, constants.HUMANISER_OPTS),
+        });
+    };
 
     render() {
         const {
             task,
             labels,
             delSubtask,
+            statuses,
         } = this.props;
         const {
             // id,
             label,
             summary,
-            estimate,
+            // estimate,
             key,
             dirty,
             description,
+            status,
+            focused,
         } = task;
 
         // const cellStyle = { /*padding: 0*/ };
+        const statusDictElement = statuses[status];
 
         return (
             <TableRow>
@@ -55,7 +91,7 @@ export default class Row extends PureComponent {
                 </TableCell>
                 <TableCell className="cell summary-and-description" >
                     <Input
-                        // autoFocus
+                        autoFocus={focused}
                         className="summary"
                         value={summary}
                         onChange={this.handleSummaryChange}
@@ -72,8 +108,9 @@ export default class Row extends PureComponent {
                 </TableCell>
                 <TableCell className="cell original-estimate" >
                     <Input
-                        value={estimate}
+                        value={/*humanizeDuration(estimate, constants.HUMANISER_OPTS)*/this.state.estimateRaw}
                         onChange={this.handleEstimateChange}
+                        onBlur={this.handleEstimateBlur}
                     />
                 </TableCell>
                 <TableCell className="cell jira-item" >
@@ -91,6 +128,13 @@ export default class Row extends PureComponent {
                         !key ? <span key="2">Not created in Jira</span> : null,
                         !dirty && key ? <span key="3" className="gray">Clean</span> : null,
                     ]}
+                </TableCell>
+                <TableCell className="cell jira-status" >
+                    {
+                        key && statusDictElement
+                        ? <span>{statusDictElement.name}</span>
+                        : <None />
+                    }
                 </TableCell>
                 <TableCell className="cell actions" >
                     {!key && (

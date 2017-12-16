@@ -1,5 +1,6 @@
 import serializeError from 'serialize-error';
 import { each } from 'lodash/collection';
+import humanizeDuration from 'humanize-duration';
 
 import * as actionTypes from './actionTypes';
 import * as selectors from './selectors';
@@ -38,13 +39,13 @@ async function doRequest(token, apiUrl, method, payload) {
     }
 }
 
-export function incFoo() {
-    return { type: actionTypes.INC_FOO };
-}
+// export function incFoo() {
+//     return { type: actionTypes.INC_FOO };
+// }
 
-export function decFoo() {
-    return { type: actionTypes.DEC_FOO };
-}
+// export function decFoo() {
+//     return { type: actionTypes.DEC_FOO };
+// }
 
 export const initFromJiraItem = rawSubtasks => ({
     type: actionTypes.INIT_FROM_JIRA_ITEM,
@@ -140,7 +141,7 @@ export const updateSubtask = (task) => async function(dispatch, getState, api) {
             summary: `${label}: ${summary}`,
             description,
             timetracking: {
-                originalEstimate: estimate
+                originalEstimate: humanizeDuration(estimate, constants.HUMANISER_OPTS)
             }
         }
     };
@@ -186,7 +187,7 @@ export const createSubtask = (task) => async function(dispatch, getState, api) {
                 id: 5 // subtask
             },
             timetracking: {
-                originalEstimate: estimate
+                originalEstimate: humanizeDuration(estimate, constants.HUMANISER_OPTS)
             },
             [constants.CUST_FIELD_RND_DEVISION]: {
                 value: rndDevName

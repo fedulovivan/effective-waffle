@@ -1,62 +1,24 @@
-// import config from 'config';
-import humanizeDuration from 'humanize-duration';
+// import humanizeDuration from 'humanize-duration';
 
 import { isNil } from 'lodash/lang';
-// import { each } from 'lodash/collection';
+import { keyBy } from 'lodash/collection';
 import * as actionTypes from './actionTypes';
 import * as constants from './constants';
 
-const shortEnglishHumanizer = humanizeDuration.humanizer({
-    language: 'shortEn',
-    languages: {
-        shortEn: {
-            //y: () => 'y',
-            //mo: () => 'mo',
-            w: () => 'w',
-            d: () => 'd',
-            h: () => 'h',
-            m: () => 'm',
-            s: () => 's',
-            //ms: () => 'ms',
-        }
-    },
-    units: [/*'y', 'mo',*/'w', 'd', 'h', 'm', 's'],
-    unitMeasures: {
-        //y: 31557600000,
-        //mo: 2629800000, // jira 864000000
-        w: 144000000, // jira 144000000 normal 604800000
-        d: 28800000, // jira 28800000 normal 86400000
-        h: 3600000,
-        m: 60000,
-        s: 1000,
-        ms: 1
-    }
-});
-
-// import { debug } from 'util';
-// import * as selectors from './selectors';
-// console.log(config.get('labels'));
-// const LABEL_GUI = 'GUI';
-// const LABEL_QA = 'QA';
-// const LABEL_DB = 'DB';
-// const LABEL_DOC = 'DOC';
-// const LABEL_OTHER = 'OTHER';
-// const LABEL_DEV = 'DEV';
-// const LABEL_IMDB = 'IMDB';
-// const LABEL_CORE = 'CORE';
 
 const EMPTY_SUBTASK = {
-    // label: constants.LABEL_OTHER,
     summary: '',
-    estimate: '1m',
+    estimate: 0,
     dirty: false,
+    status: 1, // Open
+    focused: true,
 };
 
 const isValidLabel = label => constants.LABELS.includes(label);
 
 export const INITIAL_STATE = {
-    foo: 1,
-    rootItemKey: /* 'LWB-4584' *//* null */"", // hackatonteam2 story
+    // foo: 1,
+    rootItemKey: '',
     focusFactor: 0.5,
     labels: constants.LABELS,
     subtaskIdSequence: 100000, // greater than jira ids
@@ -70,21 +32,22 @@ export const INITIAL_STATE = {
     error: null,
     user: '',
     pass: '',
+    statuses: {},
 };
 
-const rootReducer = function(state/* = INITIAL_STATE*/, action) {
+const rootReducer = function(state = {}, action) {
     const { type, payload } = action;
     switch (type) {
-        case actionTypes.INC_FOO:
-            return {
-                ...state,
-                foo: state.foo + 1,
-            };
-        case actionTypes.DEC_FOO:
-            return {
-                ...state,
-                foo: state.foo - 1,
-            };
+        // case actionTypes.INC_FOO:
+        //     return {
+        //         ...state,
+        //         foo: state.foo + 1,
+        //     };
+        // case actionTypes.DEC_FOO:
+        //     return {
+        //         ...state,
+        //         foo: state.foo - 1,
+        //     };
         case actionTypes.ADD_SUBTASK:
             const subtaskIdSequence = state.subtaskIdSequence + 1;
             return {
@@ -104,7 +67,7 @@ const rootReducer = function(state/* = INITIAL_STATE*/, action) {
             const { id } = payload;
             return {
                 ...state,
-                subtasks: state.subtasks.filter( task => id !== task.id)
+                subtasks: state.subtasks.filter(task => id !== task.id)
             };
         }
         case actionTypes.UPD_SUBTASK: {
@@ -134,7 +97,7 @@ const rootReducer = function(state/* = INITIAL_STATE*/, action) {
 
             const subtaskExist = (subtasks, keyToSearch) => subtasks.some(({ key }) => key === keyToSearch);
 
-            subtasks.forEach(({ id, key, fields: { summary, description, timeoriginalestimate } }) => {
+            subtasks.forEach(({ id, key, fields: { status: { id: status }, summary, description, timeoriginalestimate } }) => {
 
                 if (subtaskExist(newStateSubtasks, key)) return;
 
@@ -146,13 +109,18 @@ const rootReducer = function(state/* = INITIAL_STATE*/, action) {
                 //EMPTY_SUBTASK
 
                 newStateSubtasks.push({
-                    id,
-                    label: isValid ? candidateLabel : constants.LABEL_OTHER,
-                    summary: canExtractLabel ? smatches[2] : summary,
-                    description: isNil(description) ? "" : description,
-                    estimate: shortEnglishHumanizer(timeoriginalestimate * 1000, { spacer: '', delimiter: ' ' }),
-                    dirty: false,
-                    key,
+                    ...EMPTY_SUBTASK,
+                    ...{
+                        id,
+                        label: isValid ? candidateLabel : constants.LABEL_OTHER,
+                        summary: canExtractLabel ? smatches[2] : summary,
+                        description: isNil(description) ? "" : description,
+                        estimate: /* humanizeDuration( */timeoriginalestimate * 1000/*, constants.HUMANISER_OPTS),*/,
+                        dirty: false,
+                        key,
+                        status,
+                        focused: false,
+                    }
                 });
             });
 
@@ -285,7 +253,7 @@ const rootReducer = function(state/* = INITIAL_STATE*/, action) {
             return {
                 ...state,
                 fetchStatusesPending: false,
-                statuses,
+                statuses: keyBy(statuses, 'id'),
             };
         }
         case actionTypes.FETCH_STATUSES_FAIL: {

@@ -56,6 +56,8 @@ link with another subtask (?)
 - show panel with help/tips
 - per subtask validation
 - reorder rows with drag and drop
+- show remaining
+- show growl notifications
 
 + take devision from main task
 

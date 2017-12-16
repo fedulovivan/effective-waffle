@@ -13,6 +13,7 @@ const reduxConnector = connect(
         subtasks: selectors.getSubtasks(state),
         labels: selectors.getLabels(state),
         jiraItem: selectors.getJiraItem(state),
+        statuses: selectors.getStatuses(state),
     }),
     dispatch => ({
         delSubtask: id => dispatch(actions.delSubtask(id)),
@@ -32,6 +33,7 @@ class Subtasks extends Component {
             delSubtask,
             updSubtask,
             addSubtask,
+            statuses,
             // jiraItem,
         } = this.props;
         return (
@@ -55,6 +57,7 @@ class Subtasks extends Component {
                                     <TableCell className="cell original-estimate">Estimate</TableCell>
                                     <TableCell className="cell jira-item">Jira Item</TableCell>
                                     <TableCell className="cell row-status">Record Status</TableCell>
+                                    <TableCell className="cell jira-status">Jira Status</TableCell>
                                     <TableCell className="cell actions">Actions</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -65,6 +68,7 @@ class Subtasks extends Component {
                                             task={task}
                                             key={task.id}
                                             labels={labels}
+                                            statuses={statuses}
                                             delSubtask={delSubtask}
                                             updSubtask={updSubtask}
                                         />

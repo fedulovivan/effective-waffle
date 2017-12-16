@@ -9,7 +9,7 @@ import IconButton from 'material-ui/IconButton';
 import Refresh from 'material-ui-icons/Refresh';
 import AddIcon from 'material-ui-icons/Add';
 import DoNotDisturbIcon from 'material-ui-icons/DoNotDisturb';
-import SyncIcon from 'material-ui-icons/Sync';
+import SaveIcon from 'material-ui-icons/Save';
 
 import * as actions from './actions';
 import * as selectors from './selectors';
@@ -154,7 +154,7 @@ class General extends Component {
                         disabled={!(isDirty)}
                     >
                         {[
-                            <SyncIcon key="1" />,
+                            <SaveIcon key="1" />,
                             toCreate ? <span key="2">create {toCreate} item(s)</span> : null,
                             toCreate && toUpdate ? <span key="3"> and </span> : null,
                             toUpdate ? <span key="4">update {toUpdate} item(s)</span> : null,

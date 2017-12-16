@@ -1,5 +1,5 @@
 import validate from 'validate.js';
-import parseDuration from 'parse-duration';
+// import parseDuration from 'parse-duration';
 // import { parse } from 'querystring';
 // import moment from 'moment';
 import { get, pick } from 'lodash/object';
@@ -7,7 +7,7 @@ import { each, sortBy } from 'lodash/collection';
 import * as constants from './constants';
 
 export const getAll = state => state;
-export const getFoo = state => getAll(state).foo;
+// export const getFoo = state => getAll(state).foo;
 export const getSubtasks = state => {
     const { subtasks } = getAll(state);
     return sortBy(subtasks, 'id');
@@ -21,15 +21,16 @@ export const getFocusFactor = state => getAll(state).focusFactor;
 export const getUser = state => getAll(state).user;
 export const getPass = state => getAll(state).pass;
 export const getLastNewLabel = state => getAll(state).lastNewLabel;
+export const getStatuses = state => getAll(state).statuses;
 
 export const getTotalEstimate = state => {
     const subtasks = getSubtasks(state);
     return subtasks.reduce((memo, { estimate }) => {
-        try {
-            memo += parseDuration(estimate);
-        } catch (e) {
-            console.error(`cannot parse duration '${estimate}'`, e);
-        }
+        // try {
+            memo += /* parseDuration */(estimate);
+        // } catch (e) {
+            // console.error(`cannot parse duration '${estimate}'`, e);
+        // }
         return memo;
     }, 0);
 };
@@ -39,11 +40,11 @@ export const getTotalEstimateByLabel = state => {
     // const focusFactor = getFocusFactor(state);
     return subtasks.reduce((memo, { estimate, label }) => {
         if (!memo[label]) memo[label] = 0;
-        try {
-            memo[label] += (parseDuration(estimate)/* / focusFactor*/);
-        } catch (e) {
-            console.error(e);
-        }
+        // try {
+            memo[label] += (/* parseDuration */(estimate)/* / focusFactor*/);
+        // } catch (e) {
+        // console.error(e);
+        // }
         return memo;
     }, {});
 };
