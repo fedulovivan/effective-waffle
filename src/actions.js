@@ -1,5 +1,6 @@
 import serializeError from 'serialize-error';
-import { each } from 'lodash/collection';
+import { /* each, */ map } from 'lodash/collection';
+import { compact } from 'lodash/array';
 import humanizeDuration from 'humanize-duration';
 
 import * as actionTypes from './actionTypes';
@@ -216,19 +217,17 @@ export const syncWithJira = () => async function(dispatch, getState, api) {
     const state = getState();
     const subtasks = selectors.getSubtasks(state);
     const error = selectors.getError(state);
-    each(subtasks, task => {
+    Promise.all(compact(map(subtasks, task => {
         const {
             key,
             dirty,
+            valid,
         } = task;
         if (!dirty) return;
         if (error) return;
-        if (key) {
-            dispatch(updateSubtask(task));
-        } else {
-            dispatch(createSubtask(task));
-        }
-    });
+        if (!valid) return;
+        return key ? dispatch(updateSubtask(task)) : dispatch(createSubtask(task));
+    })));
 };
 
 export const addSubtask = () => ({

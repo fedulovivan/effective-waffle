@@ -71,7 +71,7 @@ class General extends Component {
             discardAll,
             syncWithJiraStats,
             syncWithJira,
-            // jiraItem,
+            jiraItem,
         } = this.props;
 
         const getHelperText = (validationResults, fieldName) => {
@@ -151,7 +151,7 @@ class General extends Component {
                         raised
                         color="primary"
                         onClick={syncWithJira}
-                        disabled={!(isDirty)}
+                        disabled={!(jiraItem && (toCreate || toUpdate))}
                     >
                         {[
                             <SaveIcon key="1" />,

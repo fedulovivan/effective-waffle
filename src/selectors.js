@@ -1,16 +1,36 @@
 import validate from 'validate.js';
-// import parseDuration from 'parse-duration';
-// import { parse } from 'querystring';
-// import moment from 'moment';
+import { isNil } from 'lodash/lang';
 import { get, pick } from 'lodash/object';
-import { each, sortBy } from 'lodash/collection';
+import { each, sortBy, map } from 'lodash/collection';
 import * as constants from './constants';
 
 export const getAll = state => state;
-// export const getFoo = state => getAll(state).foo;
 export const getSubtasks = state => {
     const { subtasks } = getAll(state);
-    return sortBy(subtasks, 'id');
+    return map(sortBy(subtasks, 'id'), task => {
+        const errors = validate(
+            task,
+            {
+                summary: {
+                    presence: {
+                        allowEmpty: false,
+                    }
+                },
+                estimate: {
+                    numericality: {
+                        greaterThanOrEqualTo: 1000 * 60 * 5,
+                        message: '^Estimate should be at least 5 minutes',
+                    }
+                }
+            },
+            { format: 'flat' }
+        );
+        return {
+            ...task,
+            errors,
+            valid: isNil(errors) || errors.length === 0
+        };
+    });
 };
 export const getLabels = state => getAll(state).labels;
 export const getRootItemKey = state => getAll(state).rootItemKey;
@@ -26,25 +46,16 @@ export const getStatuses = state => getAll(state).statuses;
 export const getTotalEstimate = state => {
     const subtasks = getSubtasks(state);
     return subtasks.reduce((memo, { estimate }) => {
-        // try {
-            memo += /* parseDuration */(estimate);
-        // } catch (e) {
-            // console.error(`cannot parse duration '${estimate}'`, e);
-        // }
+        memo += estimate;
         return memo;
     }, 0);
 };
 
 export const getTotalEstimateByLabel = state => {
     const subtasks = getSubtasks(state);
-    // const focusFactor = getFocusFactor(state);
     return subtasks.reduce((memo, { estimate, label }) => {
         if (!memo[label]) memo[label] = 0;
-        // try {
-            memo[label] += (/* parseDuration */(estimate)/* / focusFactor*/);
-        // } catch (e) {
-        // console.error(e);
-        // }
+        memo[label] += (/* parseDuration */(estimate)/* / focusFactor*/);
         return memo;
     }, {});
 };
@@ -53,8 +64,6 @@ export const getDirtyTotalEstimate = state => {
     const focusFactor = getFocusFactor(state);
     const totalEstimate = getTotalEstimate(state);
     return totalEstimate / focusFactor;
-    //const presision = 60 * /*60 **/ 1000; // round to nearest hour (MINUTE)
-    //return Math.round(res / presision) * presision;
 };
 
 export const getRndDevName = state => {
@@ -67,12 +76,15 @@ export const isDirty = state => {
     return subtasks.some(({ dirty }) => dirty);
 };
 
+export const isInvalid = state => {
+    const subtasks = getSubtasks(state);
+    return subtasks.some(({ valid }) => !valid);
+};
+
 export const hasNew = state => {
     const subtasks = getSubtasks(state);
     return subtasks.some(({ key }) => !key);
 };
-
-export const valid = state => true;
 
 export const isPending = state => {
     const {
@@ -131,8 +143,8 @@ export const getSyncWithJiraStats = state => {
     const subtasks = getSubtasks(state);
     let toCreate = 0;
     let toUpdate = 0;
-    each(subtasks, ({ dirty, key }) => {
-        if (dirty) {
+    each(subtasks, ({ dirty, key, valid }) => {
+        if (valid && dirty) {
             if (key) {
                 toUpdate += 1;
             } else {
@@ -142,9 +154,3 @@ export const getSyncWithJiraStats = state => {
     });
     return { toCreate, toUpdate };
 };
-
-//jiraItem.fields[constants.CUST_FIELD_RND_DEVISION].value
-// export const getHumanisedTotalEstimate = state => {
-//     const totalEstimate = getTotalEstimate(state);
-//     const duration = moment.duration(totalEstimate);
-// };

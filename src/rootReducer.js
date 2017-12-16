@@ -8,10 +8,10 @@ import * as constants from './constants';
 
 const EMPTY_SUBTASK = {
     summary: '',
-    estimate: 0,
+    estimate: 1000 * 60 * 5,
     dirty: false,
     status: 1, // Open
-    focused: true,
+    focused: false,
 };
 
 const isValidLabel = label => constants.LABELS.includes(label);
@@ -57,9 +57,12 @@ const rootReducer = function(state = {}, action) {
                     ...state.subtasks,
                     {
                         ...EMPTY_SUBTASK,
-                        ...{ id: subtaskIdSequence },
-                        ...{ label: state.lastNewLabel },
-                        ...{ dirty: true },
+                        ...{
+                            id: subtaskIdSequence,
+                            label: state.lastNewLabel,
+                            dirty: false,
+                            focused: true,
+                        },
                     }
                 ]
             };
@@ -166,7 +169,7 @@ const rootReducer = function(state = {}, action) {
                 createSubtaskPending: false,
                 error: null,
                 subtasks: state.subtasks.map(item => {
-                    return item.id === task.id ? { ...item, ...newItemDetails, dirty: false } : item;
+                    return item.id === task.id ? { ...item, ...newItemDetails, dirty: false, focused: false } : item;
                 }),
             };
         }
@@ -192,7 +195,7 @@ const rootReducer = function(state = {}, action) {
                 updSubtaskPending: false,
                 error: null,
                 subtasks: state.subtasks.map(item => {
-                    return item.id === task.id ? { ...item, dirty: false } : item;
+                    return item.id === task.id ? { ...item, dirty: false, focused: false } : item;
                 }),
             };
         }

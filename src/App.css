@@ -190,3 +190,36 @@ button.link {
     text-decoration: underline;
     cursor: pointer;
 }
+
+tr.invalid {
+    /* background-color: #FFEBEE; */
+    background: repeating-linear-gradient(
+        -45deg,
+        #ffffff,
+        #ffffff 10px,
+        #FFEBEE 10px,
+        #FFEBEE 20px
+    );
+}
+
+tr.dirty {
+    /* background-color: #E8F5E9; */
+    background: repeating-linear-gradient(
+        -45deg,
+        #ffffff,
+        #ffffff 10px,
+        #E8F5E9 10px,
+        #E8F5E9 20px
+    );
+}
+
+tr.verynew {
+    /* background-color: #F5F5F5; */
+    background: repeating-linear-gradient(
+        -45deg,
+        #ffffff,
+        #ffffff 10px,
+        #F5F5F5 10px,
+        #F5F5F5 20px
+    );
+}

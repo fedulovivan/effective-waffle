@@ -27,7 +27,7 @@ const reduxConnector = connect(
         dirtyTotalEstimate: selectors.getDirtyTotalEstimate(state),
         totalEstimateByLabel: selectors.getTotalEstimateByLabel(state),
         isDirty: selectors.isDirty(state),
-        valid: selectors.valid(state),
+        // valid: selectors.valid(state),
         isPending: selectors.isPending(state),
         syncWithJiraStats: selectors.getSyncWithJiraStats(state),
     }),
@@ -75,7 +75,7 @@ class Results extends Component {
         return (
             <div className="column result">
                 {
-                    error 
+                    error
                     && (
                         <div>
                             <h3>Error</h3>
@@ -84,7 +84,7 @@ class Results extends Component {
                     )
                 }
                 <div>
-                    <h3>Sub-tasks statistics</h3>
+                    <h3>Statistics</h3>
                     <dl className="flexed">
                         <dt>Total sub-tasks</dt>
                         <dd className="important">{subtasks.length}</dd>
@@ -92,6 +92,8 @@ class Results extends Component {
                         <dd className={classNames('important', { gray: dirtyTotalEstimate === 0 })}>
                             {humanizeDuration(dirtyTotalEstimate, constants.HUMANISER_OPTS)}
                         </dd>
+                        <dt>Storypoints</dt>
+                        <dd className="important">{(jiraItem && jiraItem.fields[constants.CUST_FIELD_STORY_POINTS]) || <None />}</dd>
                         <dt>Pure estimate</dt>
                         <dd className={classNames({ gray: totalEstimate === 0 })}>
                             {humanizeDuration(totalEstimate, constants.HUMANISER_OPTS)}
@@ -108,8 +110,6 @@ class Results extends Component {
                             <dd><a title="Open item in new tab in Jira" target="_blank" rel="noopener noreferrer" href={`https://jira.danateq.net/browse/${jiraItem.key}`}>{jiraItem.key}</a></dd>
                             <dt>Summary</dt>
                             <dd>{jiraItem.fields.summary}</dd>
-                            <dt>Storypoints</dt>
-                            <dd>{jiraItem.fields[constants.CUST_FIELD_STORY_POINTS] || <None />}</dd>
                             <dt>R&D Division name</dt>
                             <dd>{rndDevName || <None />}</dd>
                             <dt>Project</dt>
@@ -127,23 +127,3 @@ class Results extends Component {
 }
 
 export default reduxConnector(Results);
-
-//<h3>Sync subtasks with Jira</h3>
-//<div className="vertical-buttons">
-//    <Button
-//        title="Synchronize local changes with Jira"
-//        raised
-//        color="primary"
-//        onClick={syncWithJira}
-//        disabled={!(!isPending && valid && isDirty && jiraItem && subtasks.length)}
-//    >
-//        {/* {toCreate} to create and {toUpdate} to update */}
-//        {/* {toCreate ? `` : null} */}
-//        {/* compact( */[
-//            <SyncIcon />,
-//            toCreate ? `create ${toCreate} item(s)` : null,
-//            toUpdate ? `update ${toUpdate} item(s)` : null,
-//            !toCreate && !toUpdate ? `Syncronize` : null,
-//        ]/* ).join(' and ') */}
-//    </Button>
-//</div>

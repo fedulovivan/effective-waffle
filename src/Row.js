@@ -4,6 +4,7 @@ import /* Table, */ { /* TableBody, , TableHead, */TableCell, TableRow } from 'm
 import Select from 'material-ui/Select';
 import { MenuItem } from 'material-ui/Menu';
 import Input/* , { InputLabel } */ from 'material-ui/Input';
+import classNames from 'classnames';
 
 import { parseDuration } from './utils';
 import None from './None';
@@ -73,13 +74,18 @@ export default class Row extends PureComponent {
             description,
             status,
             focused,
+            valid,
+            errors,
         } = task;
 
         // const cellStyle = { /*padding: 0*/ };
         const statusDictElement = statuses[status];
 
         return (
-            <TableRow>
+            <TableRow
+                className={classNames({ verynew: !key && !dirty, dirty: dirty && valid, invalid: dirty && !valid })}
+                title={errors && errors.length ? errors.map(e => `- ${e}`).join('\n') : null}
+            >
                 <TableCell className="cell category" >
                     <Select
                         style={{ backgroundColor: constants.LABEL_TO_COLOR[label], padding: "3px" }}
@@ -124,9 +130,10 @@ export default class Row extends PureComponent {
                     className="cell row-status"
                 >
                     {[
-                        dirty && key ? <span key="1">To be updated in Jira</span> : null,
-                        !key ? <span key="2">Not created in Jira</span> : null,
+                        valid && dirty && key ? <span key="1">To be updated in Jira</span> : null,
+                        valid && !key ? <span key="2">Not created in Jira</span> : null,
                         !dirty && key ? <span key="3" className="gray">Clean</span> : null,
+                        dirty && !valid ? <span key="4">Invalid</span> : null,
                     ]}
                 </TableCell>
                 <TableCell className="cell jira-status" >
