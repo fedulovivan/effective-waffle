@@ -19,7 +19,7 @@ import Drilldown from './Drilldown';
 
 const reduxConnector = connect(
     state => ({
-        subtasks: selectors.getSubtasks(state),
+        filteredSubtasks: selectors.getFilteredSubtasks(state),
         jiraItem: selectors.getJiraItem(state),
         rndDevName: selectors.getRndDevName(state),
         error: selectors.getError(state),
@@ -49,7 +49,7 @@ class Results extends Component {
 
     render() {
         const {
-            subtasks,
+            filteredSubtasks,
             jiraItem,
             rndDevName,
             error,
@@ -87,7 +87,7 @@ class Results extends Component {
                     <h3>Statistics</h3>
                     <dl className="flexed">
                         <dt>Total sub-tasks</dt>
-                        <dd className="important">{subtasks.length}</dd>
+                        <dd className="important">{filteredSubtasks.length}</dd>
                         <dt>Dirty estimate (with focus factor)</dt>
                         <dd className={classNames('important', { gray: dirtyTotalEstimate === 0 })}>
                             {humanizeDuration(dirtyTotalEstimate, constants.HUMANISER_OPTS)}

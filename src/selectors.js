@@ -5,6 +5,7 @@ import { each, sortBy, map } from 'lodash/collection';
 import * as constants from './constants';
 
 export const getAll = state => state;
+export const getLabelFilter = state => getAll(state).labelFilter;
 export const getSubtasks = state => {
     const { subtasks } = getAll(state);
     return map(sortBy(subtasks, 'id'), task => {
@@ -32,6 +33,12 @@ export const getSubtasks = state => {
         };
     });
 };
+export const getFilteredSubtasks = state => {
+    const subtasks = getSubtasks(state);
+    const labelFilter = getLabelFilter(state);
+    if (labelFilter === 'all') return subtasks;
+    return subtasks.filter(({ label }) => label === labelFilter);
+};
 export const getLabels = state => getAll(state).labels;
 export const getRootItemKey = state => getAll(state).rootItemKey;
 export const getJiraItem = state => getAll(state).jiraItem;
@@ -44,7 +51,7 @@ export const getLastNewLabel = state => getAll(state).lastNewLabel;
 export const getStatuses = state => getAll(state).statuses;
 
 export const getTotalEstimate = state => {
-    const subtasks = getSubtasks(state);
+    const subtasks = getFilteredSubtasks(state);
     return subtasks.reduce((memo, { estimate }) => {
         memo += estimate;
         return memo;

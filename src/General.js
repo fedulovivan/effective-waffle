@@ -131,7 +131,7 @@ class General extends Component {
                     />
                     <TextField
                         value={pass}
-                        label="Jira Password (saved only in browser)"
+                        label="Jira Password"
                         type="password"
                         onChange={this.handleChangePass}
                         helperText={getHelperText(validateGeneral, 'pass')}

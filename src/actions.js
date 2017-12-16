@@ -74,11 +74,15 @@ export const fetchStatuses = () => async function(dispatch, getState, api) {
     }
 };
 
+export const clearLabelFilter = () => ({
+    type: actionTypes.CLEAR_LABEL_FILTER
+});
+
 export const fetchSubtasks = () => async function(dispatch, getState, api) {
     const state = getState();
     const rootItemKey = selectors.getRootItemKey(state);
     const token = selectors.getBasicAuthToken(state);
-    const url = `/search?jql=parent=${rootItemKey}`;
+    const url = `/search?maxResults=500&jql=parent=${rootItemKey}`;
     dispatch({
         type: actionTypes.FETCH_SUBTASKS_PENDING
     });
@@ -125,6 +129,11 @@ export const discardAll = () => async function(dispatch, getState, api) {
     // localStorage.setItem(constants.NAME, "{}");
     dispatch(fetchJiraItem());
 };
+
+export const updLabelFilter = value => ({
+    type: actionTypes.UPD_LABEL_FILTER,
+    payload: { value },
+})
 
 export const updateSubtask = (task) => async function(dispatch, getState, api) {
     const state = getState();

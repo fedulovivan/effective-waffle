@@ -168,8 +168,10 @@ p {
 }
 
 .pie-chart-container > * {
-    margin: auto;
-    text-align: center;
+    /* margin: auto; */
+    /* text-align: center; */
+    display: flex;
+    flex-direction: column;
 }
 
 .result .error {
@@ -222,4 +224,11 @@ tr.verynew {
         #F5F5F5 10px,
         #F5F5F5 20px
     );
+}
+
+.label-filter {
+    display: flex;
+}
+.label-filter > *:first-child {
+    flex: 1;
 }

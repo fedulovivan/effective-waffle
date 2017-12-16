@@ -34,3 +34,6 @@ export const CLEAR_ERROR = 'CLEAR_ERROR';
 
 export const DISCARD_ALL = 'DISCARD_ALL';
 
+export const UPD_LABEL_FILTER = 'UPD_LABEL_FILTER';
+export const CLEAR_LABEL_FILTER = 'CLEAR_LABEL_FILTER';
+

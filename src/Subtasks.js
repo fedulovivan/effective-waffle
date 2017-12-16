@@ -10,10 +10,11 @@ import Row from './Row';
 
 const reduxConnector = connect(
     state => ({
-        subtasks: selectors.getSubtasks(state),
+        filteredSubtasks: selectors.getFilteredSubtasks(state),
         labels: selectors.getLabels(state),
         jiraItem: selectors.getJiraItem(state),
         statuses: selectors.getStatuses(state),
+        labelFilter: selectors.getLabelFilter(state),
     }),
     dispatch => ({
         delSubtask: id => dispatch(actions.delSubtask(id)),
@@ -28,12 +29,13 @@ const reduxConnector = connect(
 class Subtasks extends Component {
     render() {
         const {
-            subtasks,
+            filteredSubtasks,
             labels,
             delSubtask,
             updSubtask,
             addSubtask,
             statuses,
+            // labelFilter,
             // jiraItem,
         } = this.props;
         return (
@@ -47,7 +49,7 @@ class Subtasks extends Component {
                 Sub-tasks
                 </h3>
                 {
-                    subtasks.length
+                    filteredSubtasks.length
                     ? (
                         <Table>
                             <TableHead>
@@ -63,7 +65,7 @@ class Subtasks extends Component {
                             </TableHead>
                             <TableBody>
                                 {
-                                    subtasks.map(task => (
+                                    filteredSubtasks.map(task => (
                                         <Row
                                             task={task}
                                             key={task.id}

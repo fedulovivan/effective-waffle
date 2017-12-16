@@ -33,6 +33,7 @@ export const INITIAL_STATE = {
     user: '',
     pass: '',
     statuses: {},
+    labelFilter: 'all',
 };
 
 const rootReducer = function(state = {}, action) {
@@ -285,6 +286,18 @@ const rootReducer = function(state = {}, action) {
                 ...state,
                 fetchSubtasksPending: false,
                 error,
+            };
+        }
+        case actionTypes.UPD_LABEL_FILTER: {
+            return {
+                ...state,
+                labelFilter: payload.value,
+            };
+        }
+        case actionTypes.CLEAR_LABEL_FILTER: {
+            return {
+                ...state,
+                labelFilter: 'all'
             };
         }
         default:
