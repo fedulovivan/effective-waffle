@@ -9,7 +9,7 @@ import * as constants from './constants';
 
 const HOST = window.location.host.split(":")[0];
 
-const PROXY_URL = `http://${HOST}:1337/jira.danateq.net:443/rest/api/2`;
+const PROXY_URL = `//${HOST}/corsproxy/jira.danateq.net:443/rest/api/2`;
 
 async function doRequest(token, apiUrl, method, payload) {
     const result = await fetch(
