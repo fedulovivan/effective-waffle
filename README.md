@@ -51,3 +51,6 @@ mencoder -ovc x264 -mf w=1920:h=1080:fps=10:type=jpg 'mf://@files.txt' -o screen
 
 Create symlink for nginx
 sudo ln -sf $PWD/nginx.conf /etc/nginx/conf.d/effective-waffle.conf
+
+$ openssl genrsa -out jira.pem 1024
+$ openssl rsa -in jira.pem -pubout -out jira.pub

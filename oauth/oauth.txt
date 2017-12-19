@@ -1,0 +1,16 @@
+https://devup.co/jira-rest-api-oauth-authentication-in-node-js-2f8d226a493a
+
+application type = general application
+consumer key = planning
+application url = https://planning-local.danateq.net/
+consumer name = planning
+
+-----BEGIN PUBLIC KEY-----
+...
+-----END PUBLIC KEY-----
+
+{
+    "message":"successfully authenticated.",
+    "access_token":"...",
+    "secret":"..."
+}
