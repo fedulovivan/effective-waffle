@@ -23,13 +23,11 @@
     "request": "^2.83.0",
     "reselect": "^3.0.1",
     "serialize-error": "^2.1.0",
-    "serve": "^6.4.1",
     "typeface-roboto": "^0.0.45",
     "validate.js": "^0.12.0"
   },
   "scripts": {
-    "serve": "PORT=6613 serve -s build",
-    "start": "PORT=3333 react-scripts start",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",

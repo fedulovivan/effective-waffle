@@ -47,3 +47,7 @@ mencoder -ovc x264 -mf w=1920:h=1080:fps=10:type=jpg 'mf://@files.txt' -o screen
 - Возможно фильтрации по категории
 - Корректный подсчет времени gj правилам Jira (8 hours = 1 days, 5 days = 1 week)
 - Отображение Jira статуса сабтаски
+
+
+Create symlink for nginx
+sudo ln -sf $PWD/nginx.conf /etc/nginx/conf.d/effective-waffle.conf
