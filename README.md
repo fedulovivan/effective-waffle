@@ -28,6 +28,9 @@
 + take devision from main task
 + pie char drilldown
 + ability to update existing subtasks
+- better ux for loaded-not-loaded main story
+- prevent changing current issue(?)
+- open from jira URL
 
 mogrify -crop 1920x1080+1360+0 20171208183351.jpg
 ls -1tr *.jpg > files.txt
