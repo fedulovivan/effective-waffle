@@ -29,6 +29,7 @@ app.use(session({
     secret: 'effective waffle',
     resave: false,
     saveUninitialized: false,
+    foo: 1,
 }));
 
 app.get('/jira', function (req, res) {
