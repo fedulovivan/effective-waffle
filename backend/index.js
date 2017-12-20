@@ -22,7 +22,7 @@ const OAUTH_AUTH_TOKEN = 'FNw9XepMra1e2RvKFzbauC2bCeohWaB5';
 
 const OAUTH_TOKEN_SECRET = 'wJ2MkGjZFub0NrRnEsWRw6i8rGwjmye3';
 
-app.use(session({ secret: 'red' }));
+app.use(session({ secret: 'red', foo: 1 }));
 
 app.get('/jira', function (req, res) {
     const oa = new OAuth(
