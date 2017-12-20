@@ -1,10 +1,11 @@
 const express = require('express');
 const session = require('express-session');
-const app = express();
 const fs = require('fs');
 const { OAuth } = require('oauth');
 const { get } = require('lodash/object');
 const path = require('path');
+
+const app = express();
 
 const PORT = 1337;
 
@@ -22,12 +23,16 @@ const OAUTH_AUTH_TOKEN = 'FNw9XepMra1e2RvKFzbauC2bCeohWaB5';
 
 const OAUTH_TOKEN_SECRET = 'wJ2MkGjZFub0NrRnEsWRw6i8rGwjmye3';
 
-app.use(session({ secret: 'red' }));
+app.use(session({
+    secret: 'red',
+    resave: false,
+    saveUninitialized: false,
+}));
 
 app.get('/jira', function (req, res) {
     const oa = new OAuth(
-        BASE_JIRA_URL + '/plugins/servlet/oauth/request-token',
-        BASE_JIRA_URL + '/plugins/servlet/oauth/access-token',
+        `${BASE_JIRA_URL}/plugins/servlet/oauth/request-token`,
+        `${BASE_JIRA_URL}/plugins/servlet/oauth/access-token`,
         CONSUMER_KEY,
         PRIVATE_KEY_STRING,
         '1.0',
@@ -37,12 +42,12 @@ app.get('/jira', function (req, res) {
     oa.getOAuthRequestToken(function (error, oauthToken, oauthTokenSecret) {
         if (error) {
             console.log(error.data);
-            response.send('Error getting OAuth access token');
+            res.send('Error getting OAuth access token');
         } else {
             req.session.oa = oa;
             req.session.oauth_token = oauthToken;
             req.session.oauth_token_secret = oauthTokenSecret;
-            return res.redirect(BASE_JIRA_URL + '/plugins/servlet/oauth/authorize?oauth_token=' + oauthToken);
+            return res.redirect(`${BASE_JIRA_URL}/plugins/servlet/oauth/authorize?oauth_token=${oauthToken}`);
         }
     });
 });
@@ -98,8 +103,8 @@ app.get('/jira/callback', function (req, res) {
 
 app.get('/projects', function (req, res) {
     const consumer = new OAuth(
-        BASE_JIRA_URL + '/plugins/servlet/oauth/request-token',
-        BASE_JIRA_URL + '/plugins/servlet/oauth/access-token',
+        `${BASE_JIRA_URL}/plugins/servlet/oauth/request-token`,
+        `${BASE_JIRA_URL}/plugins/servlet/oauth/access-token`,
         CONSUMER_KEY,
         PRIVATE_KEY_STRING,
         '1.0',
@@ -107,11 +112,12 @@ app.get('/projects', function (req, res) {
         'RSA-SHA1'
     );
     function callback(error, data, resp) {
-        console.log('data,', data, 'error,', error);
+        if (error) console.error(error);
+        //console.log('data,', data, 'error,', error);
         return res.send(data);
     }
     consumer.get(
-        BASE_JIRA_URL + '/rest/api/2/project',
+        `${BASE_JIRA_URL}/rest/api/2/project`,
         OAUTH_AUTH_TOKEN,
         OAUTH_TOKEN_SECRET,
         callback

@@ -54,3 +54,5 @@ sudo ln -sf $PWD/nginx.conf /etc/nginx/conf.d/effective-waffle.conf
 
 $ openssl genrsa -out jira.pem 1024
 $ openssl rsa -in jira.pem -pubout -out jira.pub
+
+https://devup.co/jira-rest-api-oauth-authentication-in-node-js-2f8d226a493a
