@@ -5,6 +5,8 @@ const { OAuth } = require('oauth');
 const { get } = require('lodash/object');
 const path = require('path');
 
+const FileStore = require('session-file-store')(session);
+
 const app = express();
 
 const PORT = 1337;
@@ -19,12 +21,12 @@ const CONSUMER_KEY = 'planning';
 
 const CALLBACK_URL = `${CURRENT_HOST}/backend/jira/callback`;
 
-const OAUTH_AUTH_TOKEN = 'FNw9XepMra1e2RvKFzbauC2bCeohWaB5';
-
-const OAUTH_TOKEN_SECRET = 'wJ2MkGjZFub0NrRnEsWRw6i8rGwjmye3';
+//const OAUTH_AUTH_TOKEN = 'FNw9XepMra1e2RvKFzbauC2bCeohWaB5';
+//const OAUTH_TOKEN_SECRET = 'wJ2MkGjZFub0NrRnEsWRw6i8rGwjmye3';
 
 app.use(session({
-    secret: 'red',
+    store: new FileStore(),
+    secret: 'effective waffle',
     resave: false,
     saveUninitialized: false,
 }));
@@ -82,7 +84,7 @@ app.get('/jira/callback', function (req, res) {
     oa.getOAuthAccessToken(
         req.session.oauth_token,
         req.session.oauth_token_secret,
-        req.param('oauth_verifier'),
+        req.params.oauth_verifier, /*req.param('oauth_verifier')*/ // TODO use req.params.oauth_verifier instead
         function (error, oauth_access_token, oauth_access_token_secret, results2) {
             if (error) {
                 console.log('error');
@@ -118,8 +120,8 @@ app.get('/projects', function (req, res) {
     }
     consumer.get(
         `${BASE_JIRA_URL}/rest/api/2/project`,
-        OAUTH_AUTH_TOKEN,
-        OAUTH_TOKEN_SECRET,
+        get(req, 'session.oauth_access_token'), //OAUTH_AUTH_TOKEN,
+        get(req, 'session.oauth_access_token_secret'), //OAUTH_TOKEN_SECRET,
         callback
     );
 });

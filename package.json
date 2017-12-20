@@ -25,6 +25,7 @@
     "request": "^2.83.0",
     "reselect": "^3.0.1",
     "serialize-error": "^2.1.0",
+    "session-file-store": "^1.2.0",
     "typeface-roboto": "^0.0.45",
     "validate.js": "^0.12.0"
   },
