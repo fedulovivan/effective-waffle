@@ -32,7 +32,7 @@ body,
 }
 
 .column.general form {
-    min-height: 450px;
+    /* min-height: 450px; */
 }
 
 .column.general form,
@@ -42,7 +42,11 @@ body,
 }
 
 .column.general form > * {
-    margin-bottom: 35px;
+    margin-bottom: 25px;
+}
+
+.column.general form > *:last-child {
+    margin-bottom: 0;
 }
 
 .story {
@@ -64,12 +68,12 @@ body,
 }
 
 .column.general {
-    width: 200px;
-    min-width: 200px;
+    width: 220px;
+    min-width: 220px;
 }
 .column.result {
-    width: 250px;
-    min-width: 250px;
+    width: 220px;
+    min-width: 220px;
 }
 
 .gray {
@@ -118,7 +122,7 @@ h3 {
     text-align: center;
     border-bottom: 2px solid rgb(154, 218, 253);
     margin-bottom: 10px;
-    margin-top: 20px;
+    /* margin-top: 25px; */
 }
 
 p {
@@ -169,7 +173,7 @@ p {
 }
 
 .action-buttons {
-    width: 210px;
+    width: 220px;
     position: fixed;
     bottom: 0;
 }
@@ -218,4 +222,7 @@ tr.verynew {
 }
 .label-filter > *:first-child {
     flex: 1;
+}
+.text-centered {
+    text-align: center;
 }

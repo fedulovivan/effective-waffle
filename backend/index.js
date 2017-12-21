@@ -36,9 +36,9 @@ const PRIVATE_KEY_STRING = fs.readFileSync(
 const APP_CONSUMER_KEY = 'planning';
 
 const METHOD_GET = 'GET';
-const METHOD_POST = 'POST';
-const METHOD_PUT = 'PUT';
-const METHOD_DELETE = 'DELETE';
+// const METHOD_POST = 'POST';
+// const METHOD_PUT = 'PUT';
+// const METHOD_DELETE = 'DELETE';
 
 app.use(session({
     store: new FileStore({
@@ -55,11 +55,69 @@ app.use(bodyParser.json());
 
 app.use(expressRequestId());
 
+const ts = () => (new Date()).toISOString();
+
+const callApi = async (req, object, method) => {
+
+    const {
+        method: requestMethod,
+        id: requestId,
+    } = req;
+
+    const {
+        token,
+        token_secret,
+    } = req.session;
+
+    if (!token || !token_secret) {
+        // TODO should be sent with 401 status
+        throw new Error(`no 'token' or 'token_secret' are available in user session`);
+    }
+
+    const params = {
+        host: JIRA_DOMAIN,
+        oauth: {
+            consumer_key: APP_CONSUMER_KEY,
+            private_key: PRIVATE_KEY_STRING,
+            token,
+            token_secret,
+        }
+    };
+
+    const client = new JiraClient(params);
+
+    const apiFunctionPath = [object, method].join('.');
+
+    if (!isFunction(get(client, apiFunctionPath))) {
+        throw new Error(`not existing jira-connector function path ${apiFunctionPath}`);
+    }
+
+    // receive params via query string for get requests,
+    // and via post body for all other
+    const apiParams = requestMethod === METHOD_GET ? req.query : req.body;
+
+    console.log(ts(), `request ${requestId}: Calling API method ${apiFunctionPath}`);
+    console.log(ts(), `request ${requestId}:`, { apiParams });
+
+    return new Promise((resolve, reject) => {
+        client[object][method](apiParams, (error, result) => {
+            if (error) return reject(error);
+            if (isArray(result)) {
+                console.log(ts(), `request ${requestId}: Got array of ${result.length} items`);
+            } else {
+                console.log(ts(), `request ${requestId}: Got object with ${size(result)} fields`);
+            }
+            resolve(result);
+        });
+    });
+
+};
+
 app.get('/', (req, res) => {
     res.send(`Welcome to "Jira Planning Tool" backend root path`);
 });
 
-app.get('/jira-connector/request-permission', (req, res, next) => {
+app.get('/jira-connector/request-permission', (req, res) => {
     const params = {
         host: JIRA_DOMAIN,
         oauth: {
@@ -70,7 +128,7 @@ app.get('/jira-connector/request-permission', (req, res, next) => {
     };
     getAuthorizeURL(params, (error, oauthResponse) => {
         if (error) return res.status(401).json({ error });
-        console.log({ getAuthorizeURL: oauthResponse });
+        console.log(ts(), { getAuthorizeURL: oauthResponse });
         const {
             token,
             token_secret,
@@ -82,11 +140,11 @@ app.get('/jira-connector/request-permission', (req, res, next) => {
     });
 });
 
-app.get('/jira-connector/receive-authentication-callback', (req, res, next) => {
+app.get('/jira-connector/receive-authentication-callback', (req, res) => {
     const {
         oauth_verifier,
     } = req.query;
-    console.log({ receiveAuthenticationCallback: req.query });
+    console.log(ts(), { receiveAuthenticationCallback: req.query });
     if (!oauth_verifier) {
         return res.status(401).json({ error: `no 'oauth_verifier' parameter in Jira response` });
     }
@@ -109,44 +167,24 @@ app.get('/jira-connector/receive-authentication-callback', (req, res, next) => {
     };
     swapRequestTokenWithAccessToken(params, (error, token) => {
         if (error) return res.status(401).json({ error });
-        console.log({ swapRequestTokenWithAccessToken: token });
+        console.log(ts(), { swapRequestTokenWithAccessToken: token });
         req.session.token = token;
-        res.redirect(CURRENT_HOST);
-        // TODO fetch from
-        // https://planning-local.danateq.net/backend/jira-connector/api/myself/getMyself
+        callApi(req, 'myself', 'getMyself').then(({ name: username }) => {
+            req.session.username = username;
+            console.log(ts(), { username });
+            res.redirect(CURRENT_HOST);
+        });
     });
 });
 
 app.all(`/jira-connector/api/:object?/:method?`, async (req, res) => {
 
     const {
-        method: requestMethod,
+        // method: requestMethod,
         id: requestId,
     } = req;
 
     try {
-
-        const {
-            token,
-            token_secret,
-        } = req.session;
-
-        if (!token || !token_secret) {
-            // TODO should be sent with 401 status
-            throw new Error(`no 'token' or 'token_secret' are available in user session`);
-        }
-
-        const params = {
-            host: JIRA_DOMAIN,
-            oauth: {
-                consumer_key: APP_CONSUMER_KEY,
-                private_key: PRIVATE_KEY_STRING,
-                token,
-                token_secret,
-            }
-        };
-
-        const client = new JiraClient(params);
 
         const {
             object,
@@ -157,40 +195,17 @@ app.all(`/jira-connector/api/:object?/:method?`, async (req, res) => {
             throw new Error(`url should be like /jira-connector/api/:object/:method`);
         }
 
-        const apiFunctionPath = [object, method].join('.');
-
-        if (!isFunction(get(client, apiFunctionPath))) {
-            throw new Error(`not existing jira-connector function path ${apiFunctionPath}`);
-        }
-
-        // receive params via query string for get requests,
-        // and via post body for all other
-        const apiParams = requestMethod === METHOD_GET ? req.query : req.body;
-
-        console.log(`request ${requestId}: Calling API method ${apiFunctionPath}`);
-        console.log(`request ${requestId}:`, { apiParams });
-
-        const result = await new Promise((resolve, reject) => {
-            client[object][method](apiParams, (error, result) => {
-                if (error) return reject(error);
-                if (isArray(result)) {
-                    console.log(`request ${requestId}: Got array of ${result.length} items`);
-                } else {
-                    console.log(`request ${requestId}: Got object with ${size(result)} fields`);
-                }
-                resolve(result);
-            });
-        });
+        const result = await callApi(req, object, method);
 
         res.json(result);
 
     } catch (exception) {
-        console.error(`request ${requestId}: ERROR:`, exception);
+        console.error(ts(), `request ${requestId}: ERROR:`, exception);
         const serializedException = serializeError(exception);
         res.status(500).json({
             error: isString(exception)
                 ? exception
-                : get(serializedException, 'message') ||  get(serializedException, 'errorMessages.0'),
+                : get(serializedException, 'message') || get(serializedException, 'errorMessages.0'),
             requestId
         });
     }
@@ -198,5 +213,5 @@ app.all(`/jira-connector/api/:object?/:method?`, async (req, res) => {
 });
 
 app.listen(PORT, function() {
-    console.log(`listening on ${PORT}...`);
+    console.log(ts(), `listening on ${PORT}...`);
 });

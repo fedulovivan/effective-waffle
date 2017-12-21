@@ -24,11 +24,13 @@ export const INITIAL_STATE = {
     createSubtaskPending: false,
     updSubtaskPending: false,
     fetchStatusesPending: false,
+    fetchMyselfPending: false,
     lastNewLabel: constants.LABEL_OTHER,
     error: null,
     statuses: {},
     labelFilter: 'all',
     snackbarMessage: 'Foo',
+    myself: null,
 };
 
 const rootReducer = function(state = {}, action) {
@@ -268,6 +270,28 @@ const rootReducer = function(state = {}, action) {
             return {
                 ...state,
                 labelFilter: 'all'
+            };
+        }
+        case actionTypes.FETCH_MYSELF_PENDING: {
+            return {
+                ...state,
+                fetchMyselfPending: true,
+            };
+        }
+        case actionTypes.FETCH_MYSELF_SUCCESS: {
+            const { responseJson } = payload;
+            return {
+                ...state,
+                fetchMyselfPending: false,
+                myself: responseJson,
+            };
+        }
+        case actionTypes.FETCH_MYSELF_FAIL: {
+            const { error } = payload;
+            return {
+                ...state,
+                fetchMyselfPending: false,
+                error,
             };
         }
         default:

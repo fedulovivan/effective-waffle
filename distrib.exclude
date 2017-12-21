@@ -1,0 +1,11 @@
+distrib.exclude
+.git/*
+src/*
+.gitignore
+README*
+yarn.lock
+logs/*
+sessions/*
+oauth/*
+.editorconfig
+.eslintrc

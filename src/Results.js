@@ -14,7 +14,6 @@ const reduxConnector = connect(
     state => ({
         filteredSubtasks: selectors.getFilteredSubtasks(state),
         jiraItem: selectors.getJiraItem(state),
-        rndDevName: selectors.getRndDevName(state),
         error: selectors.getError(state),
         totalEstimate: selectors.getTotalEstimate(state),
         dirtyTotalEstimate: selectors.getDirtyTotalEstimate(state),
@@ -34,7 +33,7 @@ class Results extends Component {
         const {
             filteredSubtasks,
             jiraItem,
-            rndDevName,
+            // rndDevName,
             error,
             totalEstimate,
             dirtyTotalEstimate,
@@ -70,21 +69,6 @@ class Results extends Component {
 
                     <h3>Pure Estimate By Category</h3>
                     <Drilldown />
-
-                    <h3>Main story details</h3>
-                    {jiraItem ? (
-                        <dl className="flexed">
-                            <dt>Link</dt>
-                            <dd><a title="Open item in new tab in Jira" target="_blank" rel="noopener noreferrer" href={`https://jira.danateq.net/browse/${jiraItem.key}`}>{jiraItem.key}</a></dd>
-                            <dt>Summary</dt>
-                            <dd>{jiraItem.fields.summary}</dd>
-                            <dt>R&D Division name</dt>
-                            <dd>{rndDevName || <None />}</dd>
-                            <dt>Project</dt>
-                            <dd>{jiraItem.fields.project.key}</dd>
-                        </dl>
-                    ) : <p className="red">Jira item with story is not loaded</p>}
-
 
                 </div>
 

@@ -22,6 +22,7 @@ const reduxConnector = connect(
     dispatch => ({
         fetchJiraItem: () => dispatch(actions.fetchJiraItem()),
         fetchStatuses: () => dispatch(actions.fetchStatuses()),
+        fetchMyself: () => dispatch(actions.fetchMyself()),
     })
 );
 
@@ -32,14 +33,17 @@ class App extends Component {
             fetchJiraItem,
             isGeneralValid,
             fetchStatuses,
+            fetchMyself,
         } = this.props;
         if (isGeneralValid) {
             fetchJiraItem();
         }
+        fetchMyself();
         fetchStatuses();
     }
 
     render() {
+
         const {
             isPending,
             snackbarMessage,

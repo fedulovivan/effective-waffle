@@ -57,7 +57,7 @@ export const initFromJiraItem = rawSubtasks => ({
     payload: { rawSubtasks }
 });
 
-export const fetchStatuses = () => async function(dispatch, getState, api) {
+export const fetchStatuses = () => async function(dispatch, getState) {
     const state = getState();
     const url = `/status/getAllStatuses`;
     dispatch({
@@ -81,7 +81,7 @@ export const clearLabelFilter = () => ({
     type: actionTypes.CLEAR_LABEL_FILTER
 });
 
-export const fetchSubtasks = () => async function(dispatch, getState, api) {
+export const fetchSubtasks = () => async function(dispatch, getState) {
     const state = getState();
     const rootItemKey = selectors.getRootItemKey(state);
     const url = `/search/search`;
@@ -103,7 +103,24 @@ export const fetchSubtasks = () => async function(dispatch, getState, api) {
     }
 };
 
-export const fetchJiraItem = () => async function(dispatch, getState, api) {
+export const fetchMyself = () => async function(dispatch, getState) {
+    dispatch({ type: actionTypes.FETCH_MYSELF_PENDING });
+    const url = `/myself/getMyself`;
+    try {
+        const responseJson = await doRequest(url, 'GET');
+        dispatch({
+            type: actionTypes.FETCH_MYSELF_SUCCESS,
+            payload: { responseJson }
+        });
+    } catch (error) {
+        dispatch({
+            type: actionTypes.FETCH_MYSELF_FAIL,
+            payload: { error: serializeError(error) }
+        });
+    }
+};
+
+export const fetchJiraItem = () => async function(dispatch, getState) {
     const state = getState();
     const rootItemKey = selectors.getRootItemKey(state);
     dispatch({ type: actionTypes.FETCH_JIRA_ITEM_PENDING });
@@ -123,7 +140,7 @@ export const fetchJiraItem = () => async function(dispatch, getState, api) {
     }
 };
 
-export const discardAll = () => async function(dispatch, getState, api) {
+export const discardAll = () => async function(dispatch, getState) {
     dispatch({
         type: actionTypes.DISCARD_ALL
     });
@@ -135,7 +152,7 @@ export const updLabelFilter = value => ({
     payload: { value },
 });
 
-export const updateSubtask = (task) => async function(dispatch, getState, api) {
+export const updateSubtask = (task) => async function(dispatch, getState) {
     const state = getState();
     dispatch({ type: actionTypes.UPD_SUBTASK_PENDING });
     const {
@@ -169,7 +186,7 @@ export const updateSubtask = (task) => async function(dispatch, getState, api) {
     }
 };
 
-export const createSubtask = (task) => async function(dispatch, getState, api) {
+export const createSubtask = (task) => async function(dispatch, getState) {
     dispatch({ type: actionTypes.CREATE_SUBTASK_PENDING });
     const state = getState();
     const rootItemKey = selectors.getRootItemKey(state);
@@ -217,7 +234,7 @@ export const createSubtask = (task) => async function(dispatch, getState, api) {
     }
 };
 
-export const syncWithJira = () => async function(dispatch, getState, api) {
+export const syncWithJira = () => async function(dispatch, getState) {
     dispatch({
         type: actionTypes.CLEAR_ERROR
     });
@@ -251,7 +268,7 @@ export const delSubtask = id => ({
     payload: { id },
 });
 
-export const updRootItemKey = rootItemKey => async function(dispatch, getState, api) {
+export const updRootItemKey = rootItemKey => async function(dispatch, getState) {
     dispatch({
         type: actionTypes.UPD_ROOT_ITEM_KEY,
         payload: { rootItemKey }

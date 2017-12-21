@@ -1,4 +1,4 @@
-import { createSelector } from 'reselect';
+// import { createSelector } from 'reselect';
 import validate from 'validate.js';
 import { isNil } from 'lodash/lang';
 import { get, pick } from 'lodash/object';
@@ -50,15 +50,21 @@ export const getFocusFactor = state => getAll(state).focusFactor;
 export const getLastNewLabel = state => getAll(state).lastNewLabel;
 export const getStatuses = state => getAll(state).statuses;
 export const getSnackbarMessage = state => getAll(state).snackbarMessage;
+export const getMyself = state => getAll(state).myself;
 
-export const noAuth = state => {
-    const error = getError(state);
-    const potential = [
-        `no 'token' or 'token_secret' are available in user session`,
-        `oauth_problem=token_rejected`,
-    ];
-    return error && potential.includes(error.message);
-};
+// export const getMyselfDisplayName = state => {
+//     const myself = getMyself(state);
+//     return myself ? myself.displayName : null;
+// };
+
+// export const noAuth = state => {
+//     const error = getError(state);
+//     const potential = [
+//         `no 'token' or 'token_secret' are available in user session`,
+//         `oauth_problem=token_rejected`,
+//     ];
+//     return error && potential.includes(error.message);
+// };
 
 export const getTotalEstimate = state => {
     const subtasks = getFilteredSubtasks(state);
@@ -108,8 +114,14 @@ export const isPending = state => {
         fetchJiraItemPending,
         createSubtaskPending,
         updSubtaskPending,
+        fetchStatusesPending,
+        fetchMyselfPending,
     } = state;
-    return fetchJiraItemPending || createSubtaskPending || updSubtaskPending;
+    return fetchJiraItemPending
+        || createSubtaskPending
+        || updSubtaskPending
+        || fetchStatusesPending
+        || fetchMyselfPending;
 };
 
 export const validateGeneral = state => {

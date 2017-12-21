@@ -10,6 +10,8 @@ import AddIcon from 'material-ui-icons/Add';
 import DoNotDisturbIcon from 'material-ui-icons/DoNotDisturb';
 import SaveIcon from 'material-ui-icons/Save';
 
+import None from './None';
+
 import * as actions from './actions';
 import * as selectors from './selectors';
 
@@ -24,7 +26,11 @@ const reduxConnector = connect(
         validateGeneral: selectors.validateGeneral(state),
         syncWithJiraStats: selectors.getSyncWithJiraStats(state),
         jiraItem: selectors.getJiraItem(state),
-        noAuth: selectors.noAuth(state),
+        // noAuth: selectors.noAuth(state),
+        rndDevName: selectors.getRndDevName(state),
+        myself: selectors.getMyself(state),
+        // myselfDisplayName: selectors.getMyselfDisplayName(state),
+
     }),
     dispatch => ({
         updRootItemKey: rootItemKey => dispatch(actions.updRootItemKey(rootItemKey)),
@@ -74,7 +80,10 @@ class General extends Component {
             syncWithJiraStats,
             syncWithJira,
             jiraItem,
-            noAuth,
+            // noAuth,
+            rndDevName,
+            // myselfDisplayName,
+            myself,
         } = this.props;
 
         const getHelperText = (validationResults, fieldName) => {
@@ -141,23 +150,48 @@ class General extends Component {
                         error={isError(validateGeneral, 'pass')}
                     /> */}
                 </form>
-                {
-                    noAuth
-                    ? (
-                        <div>
-                            <span class="red">You are not authenticated to use Jira API</span>
-                            <br />
-                            <a href="/backend/jira-connector/request-permission">
-                                Request for jira permissions
-                            </a>
-                        </div>
-                    )
-                    : (
-                        <a target="_blank" href="https://jira.danateq.net/plugins/servlet/oauth/users/access-tokens">
-                            Revoke access to Jira
-                        </a>
-                    )
-                }
+                <h3>Main story details</h3>
+                {jiraItem ? (
+                        <dl className="flexed">
+                            <dt>Link</dt>
+                            <dd><a title="Open item in new tab in Jira" target="_blank" rel="noopener noreferrer" href={`https://jira.danateq.net/browse/${jiraItem.key}`}>{jiraItem.key}</a></dd>
+                            <dt>Summary</dt>
+                            <dd>{jiraItem.fields.summary}</dd>
+                            <dt>R&D Division name</dt>
+                            <dd>{rndDevName || <None />}</dd>
+                            <dt>Project</dt>
+                            <dd>{jiraItem.fields.project.key}</dd>
+                        </dl>
+                    ) : <p className="gray text-centered">Jira item with story is not loaded</p>}
+                <h3>Jira Session</h3>
+                <div className="session text-centered">
+                    {
+                        myself
+                        ? (
+                            <div>
+                                { myself.displayName }
+                                <br />
+                                <a
+                                    title="Open special Jira page for managing issued access tokens"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    href="https://jira.danateq.net/plugins/servlet/oauth/users/access-tokens"
+                                >
+                                    Revoke access to Jira
+                                </a>
+                            </div>
+                        )
+                        : (
+                            <div>
+                                <span className="gray">You are not authenticated</span>
+                                <br />
+                                <a href="/backend/jira-connector/request-permission">
+                                    Request Jira for permission
+                                </a>
+                            </div>
+                        )
+                    }
+                </div>
                 <div className="vertical-buttons action-buttons">
                     <Button
                         raised
