@@ -1,7 +1,9 @@
 import serializeError from 'serialize-error';
 import { map } from 'lodash/collection';
+import { get } from 'lodash/object';
 import { compact } from 'lodash/array';
 import humanizeDuration from 'humanize-duration';
+import queryString from 'query-string';
 
 import * as actionTypes from './actionTypes';
 import * as selectors from './selectors';
@@ -9,25 +11,35 @@ import * as constants from './constants';
 
 const HOST = window.location.host.split(":")[0];
 
-const PROXY_URL = `//${HOST}/corsproxy/jira.danateq.net:443/rest/api/2`;
+const BACKEND_JIRA_API = `//${HOST}/backend/jira-connector/api`;
 
-async function doRequest(token, apiUrl, method, payload) {
+async function doRequest(apiUrl, method, payload) {
+
+    const isGetOrHead = ['GET', 'HEAD'].includes(method);
+
+    if (isGetOrHead && payload) {
+        apiUrl += `?${queryString.stringify(payload)}`;
+    }
+
     const result = await fetch(
-        `${PROXY_URL}${apiUrl}`, {
+            `${BACKEND_JIRA_API}${apiUrl}`, {
             headers: new Headers({
-                Authorization: token,
                 'Content-Type': 'application/json',
             }),
             credentials: 'include',
             method,
-            body: payload ? JSON.stringify(payload) : undefined
+            body: !isGetOrHead && payload ? JSON.stringify(payload) : undefined
         },
     );
     try {
         const rawResponse = await result.text();
         const responseJson = rawResponse === "" ? {} : JSON.parse(rawResponse);
         if (![200, 201, 204].includes(result.status)) {
-            const error = new Error(responseJson.errorMessages[0]);
+            const error = new Error(
+                get(responseJson, 'errorMessages.0')
+                || get(responseJson, 'error')
+                || get(responseJson, 'error.message')
+            );
             error.jiraErrors = responseJson.errors;
             throw error;
         }
@@ -47,13 +59,12 @@ export const initFromJiraItem = rawSubtasks => ({
 
 export const fetchStatuses = () => async function(dispatch, getState, api) {
     const state = getState();
-    const url = `/status`;
-    const token = selectors.getBasicAuthToken(state);
+    const url = `/status/getAllStatuses`;
     dispatch({
         type: actionTypes.FETCH_STATUSES_PENDING
     });
     try {
-        const responseJson = await doRequest(token, url, 'GET');
+        const responseJson = await doRequest(url, 'GET');
         dispatch({
             type: actionTypes.FETCH_STATUSES_SUCCESS,
             payload: { responseJson },
@@ -73,13 +84,12 @@ export const clearLabelFilter = () => ({
 export const fetchSubtasks = () => async function(dispatch, getState, api) {
     const state = getState();
     const rootItemKey = selectors.getRootItemKey(state);
-    const token = selectors.getBasicAuthToken(state);
-    const url = `/search?maxResults=500&jql=parent=${rootItemKey}`;
+    const url = `/search/search`;
     dispatch({
         type: actionTypes.FETCH_SUBTASKS_PENDING
     });
     try {
-        const responseJson = await doRequest(token, url, 'GET');
+        const responseJson = await doRequest(url, 'GET', { maxResults: 500, jql: `parent=${rootItemKey}`});
         dispatch({
             type: actionTypes.FETCH_SUBTASKS_SUCCESS,
             payload: { responseJson },
@@ -96,11 +106,10 @@ export const fetchSubtasks = () => async function(dispatch, getState, api) {
 export const fetchJiraItem = () => async function(dispatch, getState, api) {
     const state = getState();
     const rootItemKey = selectors.getRootItemKey(state);
-    const token = selectors.getBasicAuthToken(state);
     dispatch({ type: actionTypes.FETCH_JIRA_ITEM_PENDING });
-    const url = `/issue/${rootItemKey}`;
+    const url = `/issue/getIssue`;
     try {
-        const responseJson = await doRequest(token, url, 'GET');
+        const responseJson = await doRequest(url, 'GET', { issueKey: rootItemKey });
         dispatch({
             type: actionTypes.FETCH_JIRA_ITEM_SUCCESS,
             payload: { jiraItem: responseJson }
@@ -136,7 +145,7 @@ export const updateSubtask = (task) => async function(dispatch, getState, api) {
         key,
         estimate,
     } = task;
-    const url = `/issue/${key}`;
+    const url = `/issue/editIssue`;
     const requestPayload = {
         fields: {
             summary: `${label}: ${summary}`,
@@ -146,9 +155,8 @@ export const updateSubtask = (task) => async function(dispatch, getState, api) {
             }
         }
     };
-    const token = selectors.getBasicAuthToken(state);
     try {
-        const responseJson = await doRequest(token, url, 'PUT', requestPayload);
+        const responseJson = await doRequest(url, 'PUT', { issueKey: key, issue: requestPayload });
         dispatch({
             type: actionTypes.UPD_SUBTASK_SUCCESS,
             payload: { task, responseJson }
@@ -167,7 +175,7 @@ export const createSubtask = (task) => async function(dispatch, getState, api) {
     const rootItemKey = selectors.getRootItemKey(state);
     const rndDevName = selectors.getRndDevName(state);
     const jiraItem = selectors.getJiraItem(state);
-    const url = `/issue`;
+    const url = `/issue/createIssue`;
     const {
         label,
         summary,
@@ -195,9 +203,8 @@ export const createSubtask = (task) => async function(dispatch, getState, api) {
             }
         }
     };
-    const token = selectors.getBasicAuthToken(state);
     try {
-        const responseJson = await doRequest(token, url, 'POST', requestPayload);
+        const responseJson = await doRequest(url, 'POST', requestPayload);
         dispatch({
             type: actionTypes.CREATE_SUBTASK_SUCCESS,
             payload:{ task, newItemDetails: responseJson }
@@ -242,16 +249,6 @@ export const updSubtask = (id, fields) => ({
 export const delSubtask = id => ({
     type: actionTypes.DEL_SUBTASK,
     payload: { id },
-});
-
-export const updUser = val => ({
-    type: actionTypes.UPD_USER,
-    payload: { val },
-});
-
-export const updPass = val => ({
-    type: actionTypes.UPD_PASS,
-    payload: { val },
 });
 
 export const updRootItemKey = rootItemKey => async function(dispatch, getState, api) {

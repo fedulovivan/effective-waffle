@@ -14,12 +14,12 @@
 + ability to view existing stories with subtasks
 + use last label to create next task
 + persist in local storage per root task
-- filter by category
++ filter by category
 - navigate between text inputs with Ctrl + Arrows
 - add new row with enter on last field
 - go to next input with enter on current
 - autocomplte for summary
-- oauth2 authentication
++ oauth2 authentication
 - show panel with help/tips
 + per subtask validation
 - reorder rows with drag and drop
@@ -30,12 +30,13 @@
 + ability to update existing subtasks
 - better ux for loaded-not-loaded main story
 - prevent changing current issue(?)
-- open from jira URL
+- open tool from jira URL
+- current user panel
+- move jira issue details panel to the left
 
 mogrify -crop 1920x1080+1360+0 20171208183351.jpg
 ls -1tr *.jpg > files.txt
 mencoder -ovc x264 -mf w=1920:h=1080:fps=10:type=jpg 'mf://@files.txt' -o screenlapse.avi
-
 
 Выложил значительно обновленную версию тула, теперь она готова к реальному практическому применению:
 - Сохраниение всех изменений в браузере, обновление страницы не приведет к потери данных
@@ -56,5 +57,3 @@ $ openssl genrsa -out jira.pem 1024
 $ openssl rsa -in jira.pem -pubout -out jira.pub
 
 https://devup.co/jira-rest-api-oauth-authentication-in-node-js-2f8d226a493a
-
-// testing updated email

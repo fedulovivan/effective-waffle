@@ -47,11 +47,18 @@ export const getJiraItem = state => getAll(state).jiraItem;
 export const getFetchJiraItemPending = state => getAll(state).fetchJiraItemPending;
 export const getError = state => getAll(state).error;
 export const getFocusFactor = state => getAll(state).focusFactor;
-export const getUser = state => getAll(state).user;
-export const getPass = state => getAll(state).pass;
 export const getLastNewLabel = state => getAll(state).lastNewLabel;
 export const getStatuses = state => getAll(state).statuses;
 export const getSnackbarMessage = state => getAll(state).snackbarMessage;
+
+export const noAuth = state => {
+    const error = getError(state);
+    const potential = [
+        `no 'token' or 'token_secret' are available in user session`,
+        `oauth_problem=token_rejected`,
+    ];
+    return error && potential.includes(error.message);
+};
 
 export const getTotalEstimate = state => {
     const subtasks = getFilteredSubtasks(state);
@@ -105,17 +112,10 @@ export const isPending = state => {
     return fetchJiraItemPending || createSubtaskPending || updSubtaskPending;
 };
 
-export const getBasicAuthToken = state => {
-    const {
-        user, pass,
-    } = state;
-    return `Basic ${btoa([user, pass].join(':'))}`;
-};
-
 export const validateGeneral = state => {
     const stateSlice = pick(
         state,
-        ['rootItemKey', 'focusFactor', 'user', 'pass']
+        ['rootItemKey', 'focusFactor']
     );
     const rules = {
         rootItemKey: {
@@ -130,16 +130,6 @@ export const validateGeneral = state => {
                 lessThan: 1,
             }
         },
-        user: {
-            length: {
-                minimum: 3,
-            }
-        },
-        pass: {
-            length: {
-                minimum: 3,
-            }
-        }
     };
     return validate(stateSlice, rules);
 };

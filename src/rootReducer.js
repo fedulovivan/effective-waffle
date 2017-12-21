@@ -26,8 +26,6 @@ export const INITIAL_STATE = {
     fetchStatusesPending: false,
     lastNewLabel: constants.LABEL_OTHER,
     error: null,
-    user: '',
-    pass: '',
     statuses: {},
     labelFilter: 'all',
     snackbarMessage: 'Foo',
@@ -209,18 +207,6 @@ const rootReducer = function(state = {}, action) {
             return {
                 ...state,
                 error: null,
-            };
-        }
-        case actionTypes.UPD_USER: {
-            return {
-                ...state,
-                user: payload.val,
-            };
-        }
-        case actionTypes.UPD_PASS: {
-            return {
-                ...state,
-                pass: payload.val,
             };
         }
         case actionTypes.DISCARD_ALL: {

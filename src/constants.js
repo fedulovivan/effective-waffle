@@ -2,6 +2,7 @@ export const CUST_FIELD_STORY_POINTS = 'customfield_10002';
 export const CUST_FIELD_RND_DEVISION = 'customfield_10600';
 export const NONE = 'N/A';
 export const NAME = 'effective-waffle';
+export const OFFICIAL_NAME = 'Jira Planning Tool';
 
 export const LABELS = [
     'GUI',

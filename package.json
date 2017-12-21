@@ -4,15 +4,17 @@
   "private": true,
   "dependencies": {
     "classnames": "^2.2.5",
-    "corsproxy-https": "^1.5.2",
+    "config": "^1.28.1",
+    "express-request-id": "^1.4.0",
     "express-session": "^1.15.6",
     "humanize-duration": "^3.12.0",
+    "jira-connector": "^2.7.0",
     "lodash": "^4.17.4",
     "material-ui": "^1.0.0-beta.22",
     "material-ui-icons": "^1.0.0-beta.17",
     "moment": "^2.19.3",
-    "oauth": "^0.9.15",
     "parse-duration": "^0.1.1",
+    "query-string": "^5.0.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-redux": "^5.0.6",
@@ -31,11 +33,10 @@
   },
   "scripts": {
     "backend": "node backend/index",
-    "start": "react-scripts start",
+    "start": "PORT=6613 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
-    "corsproxy": "corsproxy"
+    "eject": "react-scripts eject"
   },
   "devDependencies": {
     "eslint-config-airbnb": "^16.1.0",

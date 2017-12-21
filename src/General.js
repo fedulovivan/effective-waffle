@@ -19,21 +19,22 @@ const reduxConnector = connect(
         hasNew: selectors.hasNew(state),
         rootItemKey: selectors.getRootItemKey(state),
         focusFactor: selectors.getFocusFactor(state),
-        user: selectors.getUser(state),
-        pass: selectors.getPass(state),
+        // user: selectors.getUser(state),
+        // pass: selectors.getPass(state),
         validateGeneral: selectors.validateGeneral(state),
         syncWithJiraStats: selectors.getSyncWithJiraStats(state),
         jiraItem: selectors.getJiraItem(state),
+        noAuth: selectors.noAuth(state),
     }),
     dispatch => ({
         updRootItemKey: rootItemKey => dispatch(actions.updRootItemKey(rootItemKey)),
         updFocusFactor: focusFactor => dispatch(actions.updFocusFactor(focusFactor)),
-        updUser: val => dispatch(actions.updUser(val)),
-        updPass: val => dispatch(actions.updPass(val)),
+        // updUser: val => dispatch(actions.updUser(val)),
+        // updPass: val => dispatch(actions.updPass(val)),
         addSubtask: () => dispatch(actions.addSubtask()),
         fetchJiraItem: () => dispatch(actions.fetchJiraItem()),
         discardAll: () => {
-            if (window.confirm(`Please confirm`)) {
+            if (window.confirm(`Please confirm discarding local changes`)) {
                 dispatch(actions.discardAll());
             }
         },
@@ -51,12 +52,12 @@ class General extends Component {
         this.props.updFocusFactor(e.target.value);
     }
 
-    handleChangeUser = (e) => {
-        this.props.updUser(e.target.value);
-    }
-    handleChangePass = (e) => {
-        this.props.updPass(e.target.value);
-    }
+    // handleChangeUser = (e) => {
+    //     this.props.updUser(e.target.value);
+    // }
+    // handleChangePass = (e) => {
+    //     this.props.updPass(e.target.value);
+    // }
 
     render() {
         const {
@@ -64,8 +65,8 @@ class General extends Component {
             hasNew,
             rootItemKey,
             focusFactor,
-            user,
-            pass,
+            // user,
+            // pass,
             addSubtask,
             fetchJiraItem,
             validateGeneral,
@@ -73,6 +74,7 @@ class General extends Component {
             syncWithJiraStats,
             syncWithJira,
             jiraItem,
+            noAuth,
         } = this.props;
 
         const getHelperText = (validationResults, fieldName) => {
@@ -123,7 +125,7 @@ class General extends Component {
                         helperText={getHelperText(validateGeneral, 'focusFactor')}
                         error={isError(validateGeneral, 'focusFactor')}
                     />
-                    <TextField
+                    {/* <TextField
                         value={user}
                         label="Jira Login"
                         onChange={this.handleChangeUser}
@@ -137,8 +139,25 @@ class General extends Component {
                         onChange={this.handleChangePass}
                         helperText={getHelperText(validateGeneral, 'pass')}
                         error={isError(validateGeneral, 'pass')}
-                    />
+                    /> */}
                 </form>
+                {
+                    noAuth
+                    ? (
+                        <div>
+                            <span class="red">You are not authenticated to use Jira API</span>
+                            <br />
+                            <a href="/backend/jira-connector/request-permission">
+                                Request for jira permissions
+                            </a>
+                        </div>
+                    )
+                    : (
+                        <a target="_blank" href="https://jira.danateq.net/plugins/servlet/oauth/users/access-tokens">
+                            Revoke access to Jira
+                        </a>
+                    )
+                }
                 <div className="vertical-buttons action-buttons">
                     <Button
                         raised
