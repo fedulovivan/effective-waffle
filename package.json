@@ -32,9 +32,9 @@
     "validate.js": "^0.12.0"
   },
   "scripts": {
-    "back:dev": "node backend/index",
+    "back:dev": "node --inspect backend/index",
     "back:prod": "node backend/index >> logs/backend.log 2>&1 &",
-    "dev": "PORT=6613 react-scripts start",
+    "webpack": "PORT=6613 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",

@@ -24,13 +24,14 @@ export const INITIAL_STATE = {
     createSubtaskPending: false,
     updSubtaskPending: false,
     fetchStatusesPending: false,
-    fetchMyselfPending: false,
+    fetchSessionPending: false,
+    updateSessionPending: false,
     lastNewLabel: constants.LABEL_OTHER,
     error: null,
     statuses: {},
     labelFilter: 'all',
-    snackbarMessage: 'Foo',
-    myself: null,
+    snackbarMessage: null,
+    session: null,
 };
 
 const rootReducer = function(state = {}, action) {
@@ -272,26 +273,60 @@ const rootReducer = function(state = {}, action) {
                 labelFilter: 'all'
             };
         }
-        case actionTypes.FETCH_MYSELF_PENDING: {
+        case actionTypes.FETCH_SESSION_PENDING: {
             return {
                 ...state,
-                fetchMyselfPending: true,
+                fetchSessionPending: true,
             };
         }
-        case actionTypes.FETCH_MYSELF_SUCCESS: {
-            const { responseJson } = payload;
+        case actionTypes.FETCH_SESSION_SUCCESS: {
+            const { responseJson: session } = payload;
+            const { snackbarMessage, ...restSession } = session;
             return {
                 ...state,
-                fetchMyselfPending: false,
-                myself: responseJson,
+                fetchSessionPending: false,
+                session: restSession,
+                snackbarMessage,
             };
         }
-        case actionTypes.FETCH_MYSELF_FAIL: {
+        case actionTypes.FETCH_SESSION_FAIL: {
             const { error } = payload;
             return {
                 ...state,
-                fetchMyselfPending: false,
+                fetchSessionPending: false,
                 error,
+            };
+        }
+        case actionTypes.UPDATE_SESSION_PENDING: {
+            return {
+                ...state,
+                updateSessionPending: true
+            };
+        }
+        case actionTypes.UPDATE_SESSION_SUCCESS: {
+            return {
+                ...state,
+                updateSessionPending: false
+            };
+        }
+        case actionTypes.UPDATE_SESSION_FAIL: {
+            const { error } = payload;
+            return {
+                ...state,
+                updateSessionPending: false,
+                error,
+            };
+        }
+        case actionTypes.CLEAR_SNACKBAR: {
+            return {
+                ...state,
+                snackbarMessage: null,
+            };
+        }
+        case actionTypes.SET_SNACKBAR_MESSAGE: {
+            return {
+                ...state,
+                snackbarMessage: payload.message,
             };
         }
         default:

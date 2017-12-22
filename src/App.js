@@ -22,23 +22,47 @@ const reduxConnector = connect(
     dispatch => ({
         fetchJiraItem: () => dispatch(actions.fetchJiraItem()),
         fetchStatuses: () => dispatch(actions.fetchStatuses()),
-        fetchMyself: () => dispatch(actions.fetchMyself()),
+        fetchSession: () => dispatch(actions.fetchSession()),
+        clearSnackbar: () => dispatch(actions.clearSnackbar()),
     })
 );
 
 class App extends Component {
+
+    state = {
+        snackbarOpen: false,
+    };
+
+    handleRequestClose = (event, reason) => {
+        this.setState({
+            ...this.state,
+            snackbarOpen: false,
+        });
+        this.props.clearSnackbar();
+    };
+
+    componentWillReceiveProps(nextProps) {
+        const notEmptyMessage = !!nextProps.snackbarMessage;
+        const messageHaveChanged = this.props.snackbarMessage !== nextProps.snackbarMessage;
+        if (notEmptyMessage && messageHaveChanged) {
+            this.setState({
+                ...this.state,
+                snackbarOpen: true,
+            });
+        }
+    }
 
     componentDidMount() {
         const {
             fetchJiraItem,
             isGeneralValid,
             fetchStatuses,
-            fetchMyself,
+            fetchSession,
         } = this.props;
         if (isGeneralValid) {
             fetchJiraItem();
         }
-        fetchMyself();
+        fetchSession();
         fetchStatuses();
     }
 
@@ -63,11 +87,12 @@ class App extends Component {
                     <Subtasks />
                     <Results />
                 </div>
-                {/* <Snackbar
-                    message={<span>{snackbarMessage}</span>}
-                    autoHideDuration={300}
-                    open
-                /> */}
+                <Snackbar
+                    message={snackbarMessage || ''}
+                    autoHideDuration={3000}
+                    onRequestClose={this.handleRequestClose}
+                    open={this.state.snackbarOpen}
+                />
             </div>
         );
     }

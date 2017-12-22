@@ -50,7 +50,8 @@ export const getFocusFactor = state => getAll(state).focusFactor;
 export const getLastNewLabel = state => getAll(state).lastNewLabel;
 export const getStatuses = state => getAll(state).statuses;
 export const getSnackbarMessage = state => getAll(state).snackbarMessage;
-export const getMyself = state => getAll(state).myself;
+
+export const getSession = state => getAll(state).session;
 
 // export const getMyselfDisplayName = state => {
 //     const myself = getMyself(state);
@@ -115,13 +116,13 @@ export const isPending = state => {
         createSubtaskPending,
         updSubtaskPending,
         fetchStatusesPending,
-        fetchMyselfPending,
+        fetchSessionPending,
     } = state;
     return fetchJiraItemPending
         || createSubtaskPending
         || updSubtaskPending
         || fetchStatusesPending
-        || fetchMyselfPending;
+        || fetchSessionPending;
 };
 
 export const validateGeneral = state => {

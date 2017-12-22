@@ -1,8 +1,8 @@
 const express = require('express');
 const session = require('express-session');
 const fs = require('fs');
-const { get } = require('lodash/object');
-const { size } = require('lodash/collection');
+const { get, pick } = require('lodash/object');
+const { size, each } = require('lodash/collection');
 const { isFunction, isArray, isString } = require('lodash/lang');
 const path = require('path');
 const JiraClient = require('jira-connector');
@@ -169,9 +169,13 @@ app.get('/jira-connector/receive-authentication-callback', (req, res) => {
         if (error) return res.status(401).json({ error });
         console.log(ts(), { swapRequestTokenWithAccessToken: token });
         req.session.token = token;
-        callApi(req, 'myself', 'getMyself').then(({ name: username }) => {
-            req.session.username = username;
-            console.log(ts(), { username });
+        callApi(req, 'myself', 'getMyself').then(({ name, displayName }) => {
+            req.session.myself = {
+                name,
+                displayName,
+            };
+            req.session.snackbarMessage = `Now you are authenticated as ${displayName}`;
+            console.log(ts(), req.session.myself);
             res.redirect(CURRENT_HOST);
         });
     });
@@ -210,6 +214,16 @@ app.all(`/jira-connector/api/:object?/:method?`, async (req, res) => {
         });
     }
 
+});
+
+app.get('/session', (req, res) => {
+    res.json(pick(req.session, ['myself', 'snackbarMessage']));
+});
+
+app.put('/session', (req, res) => {
+    const patch = pick(req.body, ['snackbarMessage']);
+    Object.assign(req.session, patch);
+    res.json({});
 });
 
 app.listen(PORT, function() {

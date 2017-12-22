@@ -10,6 +10,8 @@ import AddIcon from 'material-ui-icons/Add';
 import DoNotDisturbIcon from 'material-ui-icons/DoNotDisturb';
 import SaveIcon from 'material-ui-icons/Save';
 
+import { get } from 'lodash/object';
+
 import None from './None';
 
 import * as actions from './actions';
@@ -28,7 +30,7 @@ const reduxConnector = connect(
         jiraItem: selectors.getJiraItem(state),
         // noAuth: selectors.noAuth(state),
         rndDevName: selectors.getRndDevName(state),
-        myself: selectors.getMyself(state),
+        session: selectors.getSession(state),
         // myselfDisplayName: selectors.getMyselfDisplayName(state),
 
     }),
@@ -83,7 +85,7 @@ class General extends Component {
             // noAuth,
             rndDevName,
             // myselfDisplayName,
-            myself,
+            session,
         } = this.props;
 
         const getHelperText = (validationResults, fieldName) => {
@@ -102,6 +104,8 @@ class General extends Component {
             toCreate,
             toUpdate,
         } = syncWithJiraStats;
+
+        const displayName = get(session, 'myself.displayName');
 
         return (
             <div className="column general">
@@ -166,10 +170,10 @@ class General extends Component {
                 <h3>Jira Session</h3>
                 <div className="session text-centered">
                     {
-                        myself
+                        displayName
                         ? (
                             <div>
-                                { myself.displayName }
+                                { displayName }
                                 <br />
                                 <a
                                     title="Open special Jira page for managing issued access tokens"

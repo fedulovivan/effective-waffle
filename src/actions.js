@@ -11,7 +11,9 @@ import * as constants from './constants';
 
 const HOST = window.location.host.split(":")[0];
 
-const BACKEND_JIRA_API = `//${HOST}/backend/jira-connector/api`;
+const BACKEND_PATH = `//${HOST}/backend`;
+
+const JIRA_API_PATH = `/jira-connector/api`;
 
 async function doRequest(apiUrl, method, payload) {
 
@@ -22,7 +24,7 @@ async function doRequest(apiUrl, method, payload) {
     }
 
     const result = await fetch(
-            `${BACKEND_JIRA_API}${apiUrl}`, {
+            `${BACKEND_PATH}${apiUrl}`, {
             headers: new Headers({
                 'Content-Type': 'application/json',
             }),
@@ -59,7 +61,7 @@ export const initFromJiraItem = rawSubtasks => ({
 
 export const fetchStatuses = () => async function(dispatch, getState) {
     const state = getState();
-    const url = `/status/getAllStatuses`;
+    const url = `${JIRA_API_PATH}/status/getAllStatuses`;
     dispatch({
         type: actionTypes.FETCH_STATUSES_PENDING
     });
@@ -84,7 +86,7 @@ export const clearLabelFilter = () => ({
 export const fetchSubtasks = () => async function(dispatch, getState) {
     const state = getState();
     const rootItemKey = selectors.getRootItemKey(state);
-    const url = `/search/search`;
+    const url = `${JIRA_API_PATH}/search/search`;
     dispatch({
         type: actionTypes.FETCH_SUBTASKS_PENDING
     });
@@ -103,18 +105,44 @@ export const fetchSubtasks = () => async function(dispatch, getState) {
     }
 };
 
-export const fetchMyself = () => async function(dispatch, getState) {
-    dispatch({ type: actionTypes.FETCH_MYSELF_PENDING });
-    const url = `/myself/getMyself`;
+export const updateSession = payload => async function(dispatch, getState) {
+    dispatch({ type: actionTypes.UPDATE_SESSION_PENDING });
+    const url = `/session`;
+    try {
+        await doRequest(url, 'PUT', payload);
+        dispatch({
+            type: actionTypes.UPDATE_SESSION_SUCCESS
+        });
+    } catch (error) {
+        dispatch({
+            type: actionTypes.UPDATE_SESSION_FAIL,
+            payload: { error: serializeError(error) }
+        });
+    }
+}
+
+export const setSnackbarMessage = message => ({
+    type: actionTypes.SET_SNACKBAR_MESSAGE,
+    payload: { message },
+});
+
+export const clearSnackbar = () => async function(dispatch, getState) {
+    dispatch({ type: actionTypes.CLEAR_SNACKBAR });
+    dispatch(updateSession({ snackbarMessage: null }));
+};
+
+export const fetchSession = () => async function(dispatch, getState) {
+    dispatch({ type: actionTypes.FETCH_SESSION_PENDING });
+    const url = `/session`;
     try {
         const responseJson = await doRequest(url, 'GET');
         dispatch({
-            type: actionTypes.FETCH_MYSELF_SUCCESS,
+            type: actionTypes.FETCH_SESSION_SUCCESS,
             payload: { responseJson }
         });
     } catch (error) {
         dispatch({
-            type: actionTypes.FETCH_MYSELF_FAIL,
+            type: actionTypes.FETCH_SESSION_FAIL,
             payload: { error: serializeError(error) }
         });
     }
@@ -124,7 +152,7 @@ export const fetchJiraItem = () => async function(dispatch, getState) {
     const state = getState();
     const rootItemKey = selectors.getRootItemKey(state);
     dispatch({ type: actionTypes.FETCH_JIRA_ITEM_PENDING });
-    const url = `/issue/getIssue`;
+    const url = `${JIRA_API_PATH}/issue/getIssue`;
     try {
         const responseJson = await doRequest(url, 'GET', { issueKey: rootItemKey });
         dispatch({
@@ -162,7 +190,7 @@ export const updateSubtask = (task) => async function(dispatch, getState) {
         key,
         estimate,
     } = task;
-    const url = `/issue/editIssue`;
+    const url = `${JIRA_API_PATH}/issue/editIssue`;
     const requestPayload = {
         fields: {
             summary: `${label}: ${summary}`,
@@ -192,7 +220,7 @@ export const createSubtask = (task) => async function(dispatch, getState) {
     const rootItemKey = selectors.getRootItemKey(state);
     const rndDevName = selectors.getRndDevName(state);
     const jiraItem = selectors.getJiraItem(state);
-    const url = `/issue/createIssue`;
+    const url = `${JIRA_API_PATH}/issue/createIssue`;
     const {
         label,
         summary,
@@ -251,7 +279,7 @@ export const syncWithJira = () => async function(dispatch, getState) {
         if (error) return;
         if (!valid) return;
         return key ? dispatch(updateSubtask(task)) : dispatch(createSubtask(task));
-    })));
+    }))).then(() => dispatch(setSnackbarMessage(`Changes were sucessfully synchronized with Jira`)));
 };
 
 export const addSubtask = () => ({
