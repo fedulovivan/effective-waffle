@@ -33,25 +33,6 @@ class App extends Component {
         snackbarOpen: false,
     };
 
-    handleRequestClose = (event, reason) => {
-        this.setState({
-            ...this.state,
-            snackbarOpen: false,
-        });
-        this.props.clearSnackbar();
-    };
-
-    componentWillReceiveProps(nextProps) {
-        const notEmptyMessage = !!nextProps.snackbarMessage;
-        const messageHaveChanged = this.props.snackbarMessage !== nextProps.snackbarMessage;
-        if (notEmptyMessage && messageHaveChanged) {
-            this.setState({
-                ...this.state,
-                snackbarOpen: true,
-            });
-        }
-    }
-
     componentDidMount() {
         const {
             fetchJiraItem,
@@ -64,6 +45,25 @@ class App extends Component {
         }
         fetchSession();
         fetchStatuses();
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const notEmptyMessage = !!nextProps.snackbarMessage;
+        const messageHaveChanged = this.props.snackbarMessage !== nextProps.snackbarMessage;
+        if (notEmptyMessage && messageHaveChanged) {
+            this.setState({
+                ...this.state,
+                snackbarOpen: true,
+            });
+        }
+    }
+
+    handleRequestClose = (event, reason) => {
+        this.setState({
+            ...this.state,
+            snackbarOpen: false,
+        });
+        this.props.clearSnackbar();
     }
 
     render() {
@@ -89,9 +89,10 @@ class App extends Component {
                 </div>
                 <Snackbar
                     message={snackbarMessage || ''}
-                    autoHideDuration={3000}
+                    autoHideDuration={5000}
                     onRequestClose={this.handleRequestClose}
                     open={this.state.snackbarOpen}
+                    transitionDuration={600}
                 />
             </div>
         );

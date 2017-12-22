@@ -10,6 +10,8 @@ const config = require('config');
 const serializeError = require('serialize-error');
 const bodyParser = require('body-parser');
 const expressRequestId = require('express-request-id');
+const { oneLineTrim } = require('common-tags');
+const requestIp = require('request-ip');
 
 const {
     oauth_util: {
@@ -55,13 +57,20 @@ app.use(bodyParser.json());
 
 app.use(expressRequestId());
 
-const ts = () => (new Date()).toISOString();
+app.use(requestIp.mw());
+
+const ts = req => [
+    (new Date()).toISOString(),
+    req.clientIp,
+    get(req, 'session.myself.name', 'unknown'),
+    req.id,
+].join(' | ').concat(' |');
 
 const callApi = async (req, object, method) => {
 
     const {
         method: requestMethod,
-        id: requestId,
+        // id: requestId,
     } = req;
 
     const {
@@ -96,16 +105,16 @@ const callApi = async (req, object, method) => {
     // and via post body for all other
     const apiParams = requestMethod === METHOD_GET ? req.query : req.body;
 
-    console.log(ts(), `request ${requestId}: Calling API method ${apiFunctionPath}`);
-    console.log(ts(), `request ${requestId}:`, { apiParams });
+    console.log(ts(req), `Calling API method ${apiFunctionPath}`);
+    console.log(ts(req), { apiParams });
 
     return new Promise((resolve, reject) => {
         client[object][method](apiParams, (error, result) => {
             if (error) return reject(error);
             if (isArray(result)) {
-                console.log(ts(), `request ${requestId}: Got array of ${result.length} items`);
+                console.log(ts(req), `Got array of ${result.length} items`);
             } else {
-                console.log(ts(), `request ${requestId}: Got object with ${size(result)} fields`);
+                console.log(ts(req), `Got object with ${size(result)} fields`);
             }
             resolve(result);
         });
@@ -128,7 +137,7 @@ app.get('/jira-connector/request-permission', (req, res) => {
     };
     getAuthorizeURL(params, (error, oauthResponse) => {
         if (error) return res.status(401).json({ error });
-        console.log(ts(), { getAuthorizeURL: oauthResponse });
+        console.log(ts(req), { getAuthorizeURL: oauthResponse });
         const {
             token,
             token_secret,
@@ -144,7 +153,7 @@ app.get('/jira-connector/receive-authentication-callback', (req, res) => {
     const {
         oauth_verifier,
     } = req.query;
-    console.log(ts(), { receiveAuthenticationCallback: req.query });
+    console.log(ts(req), { receiveAuthenticationCallback: req.query });
     if (!oauth_verifier) {
         return res.status(401).json({ error: `no 'oauth_verifier' parameter in Jira response` });
     }
@@ -167,7 +176,7 @@ app.get('/jira-connector/receive-authentication-callback', (req, res) => {
     };
     swapRequestTokenWithAccessToken(params, (error, token) => {
         if (error) return res.status(401).json({ error });
-        console.log(ts(), { swapRequestTokenWithAccessToken: token });
+        console.log(ts(req), { swapRequestTokenWithAccessToken: token });
         req.session.token = token;
         callApi(req, 'myself', 'getMyself').then(({ name, displayName }) => {
             req.session.myself = {
@@ -175,7 +184,7 @@ app.get('/jira-connector/receive-authentication-callback', (req, res) => {
                 displayName,
             };
             req.session.snackbarMessage = `Now you are authenticated as ${displayName}`;
-            console.log(ts(), req.session.myself);
+            console.log(ts(req), req.session.myself);
             res.redirect(CURRENT_HOST);
         });
     });
@@ -204,7 +213,7 @@ app.all(`/jira-connector/api/:object?/:method?`, async (req, res) => {
         res.json(result);
 
     } catch (exception) {
-        console.error(ts(), `request ${requestId}: ERROR:`, exception);
+        console.error(ts(req), `ERROR:`, exception);
         const serializedException = serializeError(exception);
         res.status(500).json({
             error: isString(exception)
@@ -227,5 +236,5 @@ app.put('/session', (req, res) => {
 });
 
 app.listen(PORT, function() {
-    console.log(ts(), `listening on ${PORT}...`);
+    console.log(`listening on ${PORT}...`);
 });

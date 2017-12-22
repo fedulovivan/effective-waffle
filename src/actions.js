@@ -119,7 +119,7 @@ export const updateSession = payload => async function(dispatch, getState) {
             payload: { error: serializeError(error) }
         });
     }
-}
+};
 
 export const setSnackbarMessage = message => ({
     type: actionTypes.SET_SNACKBAR_MESSAGE,
@@ -279,7 +279,7 @@ export const syncWithJira = () => async function(dispatch, getState) {
         if (error) return;
         if (!valid) return;
         return key ? dispatch(updateSubtask(task)) : dispatch(createSubtask(task));
-    }))).then(() => dispatch(setSnackbarMessage(`Changes were sucessfully synchronized with Jira`)));
+    }))).then(() => dispatch(setSnackbarMessage(`Changes were successfully synchronized with Jira`)));
 };
 
 export const addSubtask = () => ({
