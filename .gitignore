@@ -22,3 +22,5 @@ yarn-error.log*
 oauth/*
 sessions/*
 logs/*
+
+prod.zip
