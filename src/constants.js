@@ -13,6 +13,7 @@ export const LABELS = [
     'IMDB',
     'DOC',
     'OTHER',
+    'UT',
 ];
 
 // https://materialuicolors.co/
@@ -35,6 +36,16 @@ LABELS.forEach((label, index) => {
 });
 
 export const LABEL_OTHER = 'OTHER';
+
+export const TT_TYPE_ESTIMATE = 'estimate';
+export const TT_TYPE_REMAINING = 'remaining';
+export const TT_TYPE_LOGGED = 'logged';
+
+export const TT_TYPE_LABELS = {
+    [TT_TYPE_ESTIMATE]: 'Original Estimate',
+    [TT_TYPE_REMAINING]: 'Remaining Time',
+    [TT_TYPE_LOGGED]: 'Logged Time',
+};
 
 export const HUMANISER_OPTS = {
     units: [/*'y', 'mo',*/'w', 'd', 'h', 'm', 's'],

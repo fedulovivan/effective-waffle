@@ -21,8 +21,8 @@ export const getSubtasks = state => {
                 },
                 estimate: {
                     numericality: {
-                        greaterThanOrEqualTo: 1000 * 60 * 5,
-                        message: '^Estimate should be at least 5 minutes',
+                        greaterThanOrEqualTo: /*1000 * 60 * 5*/0,
+                        // message: '^Estimate should be at least 5 minutes',
                     }
                 }
             },
@@ -53,6 +53,8 @@ export const getSnackbarMessage = state => getAll(state).snackbarMessage;
 
 export const getSession = state => getAll(state).session;
 
+export const getTimeTrackingType = state => getAll(state).timeTrackingType;
+
 // export const getMyselfDisplayName = state => {
 //     const myself = getMyself(state);
 //     return myself ? myself.displayName : null;
@@ -67,28 +69,31 @@ export const getSession = state => getAll(state).session;
 //     return error && potential.includes(error.message);
 // };
 
-export const getTotalEstimate = state => {
+export const getSumForCurrentTTType = state => {
     const subtasks = getFilteredSubtasks(state);
-    return subtasks.reduce((memo, { estimate }) => {
-        memo += estimate;
+    const timeTrackingType = getTimeTrackingType(state);
+    return subtasks.reduce((memo, subtask) => {
+        memo += subtask[timeTrackingType];
         return memo;
     }, 0);
 };
 
-export const getTotalEstimateByLabel = state => {
+export const getSumForCurrentTTTypeByLabel = state => {
     const subtasks = getSubtasks(state);
-    return subtasks.reduce((memo, { estimate, label }) => {
+    const timeTrackingType = getTimeTrackingType(state);
+    return subtasks.reduce((memo, /*{ estimate, label }*/subtask) => {
+        const { label } = subtask;
         if (!memo[label]) memo[label] = 0;
-        memo[label] += (/* parseDuration */(estimate)/* / focusFactor*/);
+        memo[label] += subtask[timeTrackingType];
         return memo;
     }, {});
 };
 
-export const getDirtyTotalEstimate = state => {
-    const focusFactor = getFocusFactor(state);
-    const totalEstimate = getTotalEstimate(state);
-    return totalEstimate / focusFactor;
-};
+// export const getDirtyTotalEstimate = state => {
+//     const focusFactor = getFocusFactor(state);
+//     const totalEstimate = getSumForCurrentTTType(state);
+//     return totalEstimate / focusFactor;
+// };
 
 export const getRndDevName = state => {
     const jiraItem = getJiraItem(state);

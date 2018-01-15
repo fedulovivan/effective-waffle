@@ -52,6 +52,7 @@ export default class Row extends PureComponent {
             labels,
             delSubtask,
             statuses,
+            timeTrackingType,
         } = this.props;
         const {
             label,
@@ -66,6 +67,8 @@ export default class Row extends PureComponent {
         } = task;
 
         const statusDictElement = statuses[status];
+
+        const currentTimeTrackingField = this.props.task[timeTrackingType];
 
         return (
             <TableRow
@@ -98,12 +101,27 @@ export default class Row extends PureComponent {
                         onChange={this.handleDescriptionChange}
                     />
                 </TableCell>
-                <TableCell className="cell original-estimate" >
-                    <Input
-                        value={this.state.estimateRaw}
-                        onChange={this.handleEstimateChange}
-                        onBlur={this.handleEstimateBlur}
-                    />
+                <TableCell className="cell original-estimate">
+                    {
+                        timeTrackingType === constants.TT_TYPE_ESTIMATE
+                        ? (
+                            <Input
+                                value={this.state.estimateRaw}
+                                onChange={this.handleEstimateChange}
+                                onBlur={this.handleEstimateBlur}
+                            />
+                        )
+                        : (
+                            <span className={classNames({ gray: !currentTimeTrackingField })}>
+                                {
+                                    humanizeDuration(
+                                        currentTimeTrackingField,
+                                        constants.HUMANISER_OPTS
+                                    )
+                                }
+                            </span>
+                        )
+                    }
                 </TableCell>
                 <TableCell className="cell jira-item" >
                     {

@@ -180,6 +180,11 @@ export const updLabelFilter = value => ({
     payload: { value },
 });
 
+export const updTimeTrackingType = value => ({
+    type: actionTypes.UPD_TIME_TRACKING_TYPE,
+    payload: { value },
+});
+
 export const updateSubtask = (task) => async function(dispatch, getState) {
     const state = getState();
     dispatch({ type: actionTypes.UPD_SUBTASK_PENDING });
