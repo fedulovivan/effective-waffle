@@ -14,7 +14,7 @@ import * as actions from './actions';
 
 const reduxConnector = connect(
     state => ({
-        totalEstimateByLabel: selectors.getTotalEstimateByLabel(state),
+        sumForCurrentTTTypeByLabel: selectors.getSumForCurrentTTTypeByLabel(state),
         labelFilter: selectors.getLabelFilter(state),
     }),
     dispatch => ({
@@ -48,44 +48,44 @@ class Drilldown extends Component {
 
     render() {
         const {
-            totalEstimateByLabel,
+            sumForCurrentTTTypeByLabel,
             labelFilter,
             clearLabelFilter,
         } = this.props;
-        const chartData = map(totalEstimateByLabel, (value, name) => {
+        const chartData = map(sumForCurrentTTTypeByLabel, (value, name) => {
             return { name, value };
         });
         return (
             <div className="pie-chart-container">
                 {chartData.length ? (
                     <div>
-                    <PieChart width={200} height={200}>
-                        <Pie dataKey="value" data={chartData} animationDuration={600}>
-                            {
-                                chartData.map(({ name }) => {
-                                    let fill = constants.LABEL_TO_COLOR[name];
-                                    if (labelFilter !== 'all' && name !== labelFilter) {
-                                        fill = '#dddddd';
-                                    }
-                                    return <ActionCell key={name} name={name} fill={fill} />;
-                                })
-                            }
-                        </Pie>
-                        <Tooltip content={<CustomTooltip />} />
-                    </PieChart>
-                    <div className="label-filter">
-                        <Select
-                            style={{ backgroundColor: constants.LABEL_TO_COLOR[labelFilter], padding: "3px" }}
-                            value={labelFilter}
-                            onChange={this.handleLabelFilterChange}
-                        >
-                            <MenuItem key="all-cats" value="all">All categories</MenuItem>
-                            {chartData.map(({ name: value }) => <MenuItem style={{ backgroundColor: constants.LABEL_TO_COLOR[value] }} value={value} key={value}>{value}</MenuItem>)}
-                        </Select>
-                        <IconButton disabled={labelFilter === 'all'}>
-                            <CancelIcon onClick={clearLabelFilter} />
-                        </IconButton>
-                    </div>
+                        <div className="label-filter">
+                            <Select
+                                style={{ backgroundColor: constants.LABEL_TO_COLOR[labelFilter], padding: "3px" }}
+                                value={labelFilter}
+                                onChange={this.handleLabelFilterChange}
+                            >
+                                <MenuItem key="all-cats" value="all">All categories</MenuItem>
+                                {chartData.map(({ name: value }) => <MenuItem style={{ backgroundColor: constants.LABEL_TO_COLOR[value] }} value={value} key={value}>{value}</MenuItem>)}
+                            </Select>
+                            <IconButton disabled={labelFilter === 'all'}>
+                                <CancelIcon onClick={clearLabelFilter} />
+                            </IconButton>
+                        </div>
+                        <PieChart width={200} height={200}>
+                            <Pie dataKey="value" data={chartData} animationDuration={600}>
+                                {
+                                    chartData.map(({ name }) => {
+                                        let fill = constants.LABEL_TO_COLOR[name];
+                                        if (labelFilter !== 'all' && name !== labelFilter) {
+                                            fill = '#dddddd';
+                                        }
+                                        return <ActionCell key={name} name={name} fill={fill} />;
+                                    })
+                                }
+                            </Pie>
+                            <Tooltip content={<CustomTooltip />} />
+                        </PieChart>
                     </div>
                 ) : <p className="gray">Add subtasks to see drilldown chart</p>}
             </div>

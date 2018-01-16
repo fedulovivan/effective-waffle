@@ -32,6 +32,7 @@ export const INITIAL_STATE = {
     labelFilter: 'all',
     snackbarMessage: null,
     session: null,
+    timeTrackingType: constants.TT_TYPE_ESTIMATE,
 };
 
 const rootReducer = function(state = {}, action) {
@@ -87,7 +88,7 @@ const rootReducer = function(state = {}, action) {
 
             const subtaskExist = (subtasks, keyToSearch) => subtasks.some(({ key }) => key === keyToSearch);
 
-            subtasks.forEach(({ id, key, fields: { status: { id: status }, summary, description, timeoriginalestimate } }) => {
+            subtasks.forEach(({ id, key, fields: { status: { id: status }, summary, description, timeoriginalestimate, timeestimate, timespent } }) => {
 
                 if (subtaskExist(newStateSubtasks, key)) return;
 
@@ -103,7 +104,9 @@ const rootReducer = function(state = {}, action) {
                         label: isValid ? candidateLabel : constants.LABEL_OTHER,
                         summary: canExtractLabel ? smatches[2] : summary,
                         description: isNil(description) ? "" : description,
-                        estimate: timeoriginalestimate * 1000,
+                        [constants.TT_TYPE_ESTIMATE]: timeoriginalestimate * 1000,
+                        [constants.TT_TYPE_REMAINING]: timeestimate * 1000,
+                        [constants.TT_TYPE_LOGGED]: timespent * 1000,
                         dirty: false,
                         key,
                         status,
@@ -167,7 +170,6 @@ const rootReducer = function(state = {}, action) {
             };
         }
         case actionTypes.UPD_SUBTASK_PENDING: {
-
             return {
                 ...state,
                 updSubtaskPending: true,
@@ -210,6 +212,12 @@ const rootReducer = function(state = {}, action) {
             return {
                 ...state,
                 error: null,
+            };
+        }
+        case actionTypes.UPD_TIME_TRACKING_TYPE: {
+            return {
+                ...state,
+                timeTrackingType: payload.value,
             };
         }
         case actionTypes.DISCARD_ALL: {

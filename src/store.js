@@ -38,6 +38,7 @@ store.subscribe(debounce(function() {
             [
                 'rootItemKey', 'focusFactor',
                 'subtaskIdSequence', 'subtasks',
+                'timeTrackingType',
             ]
         )),
     );

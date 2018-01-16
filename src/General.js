@@ -187,7 +187,7 @@ class General extends Component {
                         )
                         : (
                             <div>
-                                <span className="gray">You are not authenticated</span>
+                                <span className="red">You are not authenticated</span>
                                 <br />
                                 <a href="/backend/jira-connector/request-permission">
                                     Request Jira for permission

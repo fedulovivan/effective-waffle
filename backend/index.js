@@ -44,13 +44,19 @@ const METHOD_GET = 'GET';
 
 app.use(session({
     store: new FileStore({
-        ttl: get(config, 'sessionTTL')
+        // explicitly set to 1 second to indicate
+        //that this param does not applied when cookie.maxAge is set
+        ttl: 1
     }),
     secret: 'effective waffle',
-    resave: true,
-    saveUninitialized: true,
-    secure: true,
-    httpOnly: true,
+    name: 'effective-waffle-session-id',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        // 1 year
+        maxAge: 1000 * 3600 * 24 * 365,
+        httpOnly: true,
+    }
 }));
 
 app.use(bodyParser.json());

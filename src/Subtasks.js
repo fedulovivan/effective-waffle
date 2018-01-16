@@ -5,6 +5,7 @@ import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Ta
 
 import * as selectors from './selectors';
 import * as actions from './actions';
+import * as constants from './constants';
 
 import Row from './Row';
 
@@ -15,6 +16,7 @@ const reduxConnector = connect(
         jiraItem: selectors.getJiraItem(state),
         statuses: selectors.getStatuses(state),
         labelFilter: selectors.getLabelFilter(state),
+        timeTrackingType: selectors.getTimeTrackingType(state),
     }),
     dispatch => ({
         delSubtask: id => dispatch(actions.delSubtask(id)),
@@ -35,6 +37,7 @@ class Subtasks extends Component {
             updSubtask,
             addSubtask,
             statuses,
+            timeTrackingType,
         } = this.props;
         return (
             <div className="column subtasks">
@@ -49,7 +52,7 @@ class Subtasks extends Component {
                                 <TableRow>
                                     <TableCell className="cell category">Category</TableCell>
                                     <TableCell className="cell summary-and-description">{/*Summary and Description*/}</TableCell>
-                                    <TableCell className="cell original-estimate">Estimate</TableCell>
+                                    <TableCell className="cell original-estimate">{constants.TT_TYPE_LABELS[timeTrackingType]}</TableCell>
                                     <TableCell className="cell jira-item">Jira Item</TableCell>
                                     <TableCell className="cell row-status">Record Status</TableCell>
                                     <TableCell className="cell jira-status">Jira Status</TableCell>
@@ -66,6 +69,7 @@ class Subtasks extends Component {
                                             statuses={statuses}
                                             delSubtask={delSubtask}
                                             updSubtask={updSubtask}
+                                            timeTrackingType={timeTrackingType}
                                         />
                                     ))
                                 }

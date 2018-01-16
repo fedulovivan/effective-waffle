@@ -1,6 +1,5 @@
 {
     "appHostName": "planning-local.danateq.net",
     "jiraHostName": "jira.danateq.net",
-    "backendPort": 1337,
-    "sessionTTL": 2592000
+    "backendPort": 1337
 }
