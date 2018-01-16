@@ -5,7 +5,7 @@ import * as constants from './constants';
 
 const EMPTY_SUBTASK = {
     summary: '',
-    estimate: 1000 * 60 * 5,
+    estimate: 0,
     dirty: false,
     status: 1, // Open
     focused: false,

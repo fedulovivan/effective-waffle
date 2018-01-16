@@ -1,4 +1,8 @@
 
+- delete session if jira rejects access
+- allow to use zero original estimate
+- cannot use start over if no local changes are present, but anyway data is oudated
+
 + show details for parent
 +prefix [] (options - DB, QA, GUI, DOC)
 +title [] (text)
@@ -11,6 +15,7 @@
 +total 10 hours
 +dirty time 20 hours
 +15 hours DEV and 5 QA
+- calculate remaining
 + ability to view existing stories with subtasks
 + use last label to create next task
 + persist in local storage per root task
@@ -23,16 +28,15 @@
 - show panel with help/tips
 + per subtask validation
 - reorder rows with drag and drop
-- show remaining
-- show growl notifications
++ show snackbar notifications
 + take devision from main task
 + pie char drilldown
 + ability to update existing subtasks
 - better ux for loaded-not-loaded main story
 - prevent changing current issue(?)
 - open tool from jira URL
-- current user panel
-- move jira issue details panel to the left
++ current user panel
++ move jira issue details panel to the left
 
 mogrify -crop 1920x1080+1360+0 20171208183351.jpg
 ls -1tr *.jpg > files.txt

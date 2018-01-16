@@ -1,8 +1,8 @@
 // import { createSelector } from 'reselect';
 import validate from 'validate.js';
-import { isNil } from 'lodash/lang';
-import { get, pick } from 'lodash/object';
-import { each, sortBy, map } from 'lodash/collection';
+import { isNil, isString, isArray, isPlainObject } from 'lodash/lang';
+import { get, pick, values } from 'lodash/object';
+import { each, sortBy, map, size } from 'lodash/collection';
 
 import * as constants from './constants';
 
@@ -51,6 +51,46 @@ export const getLastNewLabel = state => getAll(state).lastNewLabel;
 export const getStatuses = state => getAll(state).statuses;
 export const getSnackbarMessage = state => getAll(state).snackbarMessage;
 
+export const getErrorMessageFromJson = state => {
+
+    const error = getError(state);
+
+    if (isNil(error)) {
+        return null;
+    }
+
+    if (!isPlainObject(error)) {
+        return `getErrorMessageFromJson expected state.error to be a plain object, check redux state`;
+    }
+
+    const { message, errorMessages, errors } = error;
+
+    if (isString(message)) {
+        return message;
+    }
+
+    if (isArray(errorMessages) && errorMessages.length > 0) {
+        return errorMessages.join('; ');
+    }
+
+    if (isPlainObject(errors) && size(errors) > 0) {
+        return values(errors).join('; ');
+    }
+
+    return `getErrorMessageFromJson was not able to extract readable error message, check redux state`;
+
+    // error: {
+    //     errorMessages: [],
+    //     errors: {
+    //       timetracking_originalestimate: 'The original estimate specified is not valid.'
+    //     }
+    //   },
+    //     get(responseJson, 'errorMessages.0')
+    //     || get(responseJson, 'error')
+    //     || get(responseJson, 'error.message')
+
+};
+
 export const getSession = state => getAll(state).session;
 
 export const getTimeTrackingType = state => getAll(state).timeTrackingType;
@@ -73,7 +113,8 @@ export const getSumForCurrentTTType = state => {
     const subtasks = getFilteredSubtasks(state);
     const timeTrackingType = getTimeTrackingType(state);
     return subtasks.reduce((memo, subtask) => {
-        memo += subtask[timeTrackingType];
+        const value = subtask[timeTrackingType];
+        memo += isNil(value) ? 0 : value;
         return memo;
     }, 0);
 };
@@ -84,7 +125,8 @@ export const getSumForCurrentTTTypeByLabel = state => {
     return subtasks.reduce((memo, /*{ estimate, label }*/subtask) => {
         const { label } = subtask;
         if (!memo[label]) memo[label] = 0;
-        memo[label] += subtask[timeTrackingType];
+        const value = subtask[timeTrackingType];
+        memo[label] += isNil(value) ? 0 : value;
         return memo;
     }, {});
 };

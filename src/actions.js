@@ -1,6 +1,6 @@
 import serializeError from 'serialize-error';
 import { map } from 'lodash/collection';
-import { get } from 'lodash/object';
+// import { get } from 'lodash/object';
 import { compact } from 'lodash/array';
 import humanizeDuration from 'humanize-duration';
 import queryString from 'query-string';
@@ -20,6 +20,7 @@ async function doRequest(apiUrl, method, payload) {
     const isGetOrHead = ['GET', 'HEAD'].includes(method);
 
     if (isGetOrHead && payload) {
+        // eslint-disable-next-line no-param-reassign
         apiUrl += `?${queryString.stringify(payload)}`;
     }
 
@@ -36,16 +37,22 @@ async function doRequest(apiUrl, method, payload) {
     try {
         const rawResponse = await result.text();
         const responseJson = rawResponse === "" ? {} : JSON.parse(rawResponse);
-        if (![200, 201, 204].includes(result.status)) {
-            const error = new Error(
-                get(responseJson, 'errorMessages.0')
-                || get(responseJson, 'error')
-                || get(responseJson, 'error.message')
-            );
-            error.jiraErrors = responseJson.errors;
-            throw error;
+
+        if ([200, 201, 204].includes(result.status)) {
+            // positive case
+            return responseJson;
         }
-        return responseJson;
+
+        // negative case, throw error
+        throw responseJson.error || `Response with error http status contains json without error field`;
+
+        // was received error status
+        // const error = new Error(
+        //     get(responseJson, 'errorMessages.0')
+        //     || get(responseJson, 'error')
+        //     || get(responseJson, 'error.message')
+        // );
+        // error.jiraErrors = responseJson.errors;
     } catch (e) {
         if (e instanceof SyntaxError) {
             throw new Error(`${result.status} ${result.statusText}`);
@@ -60,7 +67,7 @@ export const initFromJiraItem = rawSubtasks => ({
 });
 
 export const fetchStatuses = () => async function(dispatch, getState) {
-    const state = getState();
+    // const state = getState();
     const url = `${JIRA_API_PATH}/status/getAllStatuses`;
     dispatch({
         type: actionTypes.FETCH_STATUSES_PENDING
@@ -91,7 +98,7 @@ export const fetchSubtasks = () => async function(dispatch, getState) {
         type: actionTypes.FETCH_SUBTASKS_PENDING
     });
     try {
-        const responseJson = await doRequest(url, 'GET', { maxResults: 500, jql: `parent=${rootItemKey}`});
+        const responseJson = await doRequest(url, 'GET', { maxResults: 500, jql: `parent=${rootItemKey}` });
         dispatch({
             type: actionTypes.FETCH_SUBTASKS_SUCCESS,
             payload: { responseJson },
@@ -186,7 +193,7 @@ export const updTimeTrackingType = value => ({
 });
 
 export const updateSubtask = (task) => async function(dispatch, getState) {
-    const state = getState();
+    // const state = getState();
     dispatch({ type: actionTypes.UPD_SUBTASK_PENDING });
     const {
         label,
@@ -196,23 +203,24 @@ export const updateSubtask = (task) => async function(dispatch, getState) {
         estimate,
     } = task;
     const url = `${JIRA_API_PATH}/issue/editIssue`;
+    const originalEstimate = humanizeDuration(estimate, constants.HUMANISER_OPTS);
     const requestPayload = {
         fields: {
             summary: `${label}: ${summary}`,
             description,
             timetracking: {
-                originalEstimate: humanizeDuration(estimate, constants.HUMANISER_OPTS)
+                originalEstimate: originalEstimate === '0s' ? '0' : originalEstimate
             }
         }
     };
     try {
         const responseJson = await doRequest(url, 'PUT', { issueKey: key, issue: requestPayload });
-        dispatch({
+        return dispatch({
             type: actionTypes.UPD_SUBTASK_SUCCESS,
             payload: { task, responseJson }
         });
     } catch (error) {
-        dispatch({
+        return dispatch({
             type: actionTypes.UPD_SUBTASK_FAIL,
             payload: { task, error: serializeError(error) }
         });
@@ -232,6 +240,7 @@ export const createSubtask = (task) => async function(dispatch, getState) {
         description,
         estimate,
     } = task;
+    const originalEstimate = humanizeDuration(estimate, constants.HUMANISER_OPTS);
     const requestPayload = {
         fields: {
             project: {
@@ -246,7 +255,7 @@ export const createSubtask = (task) => async function(dispatch, getState) {
                 id: 5 // subtask
             },
             timetracking: {
-                originalEstimate: humanizeDuration(estimate, constants.HUMANISER_OPTS)
+                originalEstimate: originalEstimate === '0s' ? '0' : originalEstimate
             },
             [constants.CUST_FIELD_RND_DEVISION]: {
                 value: rndDevName
@@ -255,12 +264,12 @@ export const createSubtask = (task) => async function(dispatch, getState) {
     };
     try {
         const responseJson = await doRequest(url, 'POST', requestPayload);
-        dispatch({
+        return dispatch({
             type: actionTypes.CREATE_SUBTASK_SUCCESS,
-            payload:{ task, newItemDetails: responseJson }
+            payload: { task, newItemDetails: responseJson }
         });
     } catch (error) {
-        dispatch({
+        return dispatch({
             type: actionTypes.CREATE_SUBTASK_FAIL,
             payload: { task, error: serializeError(error) }
         });
@@ -273,18 +282,27 @@ export const syncWithJira = () => async function(dispatch, getState) {
     });
     const state = getState();
     const subtasks = selectors.getSubtasks(state);
-    const error = selectors.getError(state);
-    Promise.all(compact(map(subtasks, task => {
+    const globalErrorMessage = selectors.getErrorMessageFromJson(state);
+    const allSubtasksPromise = Promise.all(compact(map(subtasks, task => {
         const {
             key,
             dirty,
             valid,
         } = task;
+        if (globalErrorMessage) return;
         if (!dirty) return;
-        if (error) return;
         if (!valid) return;
         return key ? dispatch(updateSubtask(task)) : dispatch(createSubtask(task));
-    }))).then(() => dispatch(setSnackbarMessage(`Changes were successfully synchronized with Jira`)));
+    })));
+    allSubtasksPromise.then(
+        () => {
+            const state01 = getState();
+            const globalErrorMessage01 = selectors.getErrorMessageFromJson(state01);
+            dispatch(setSnackbarMessage(
+                globalErrorMessage01 || `Changes were successfully synchronized with Jira`
+            ));
+        }
+    );
 };
 
 export const addSubtask = () => ({

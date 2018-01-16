@@ -19,8 +19,9 @@ import Drilldown from './Drilldown';
 const reduxConnector = connect(
     state => ({
         filteredSubtasks: selectors.getFilteredSubtasks(state),
+        subtasks: selectors.getSubtasks(state),
         jiraItem: selectors.getJiraItem(state),
-        error: selectors.getError(state),
+        errorMessage: selectors.getErrorMessageFromJson(state),
         sumForCurrentTTType: selectors.getSumForCurrentTTType(state),
         sumForCurrentTTTypeByLabel: selectors.getSumForCurrentTTTypeByLabel(state),
         isDirty: selectors.isDirty(state),
@@ -28,6 +29,7 @@ const reduxConnector = connect(
         syncWithJiraStats: selectors.getSyncWithJiraStats(state),
         timeTrackingType: selectors.getTimeTrackingType(state),
         focusFactor: selectors.getFocusFactor(state),
+        labelFilter: selectors.getLabelFilter(state),
     }),
     dispatch => ({
         syncWithJira: () => dispatch(actions.syncWithJira()),
@@ -46,20 +48,22 @@ class Results extends Component {
         const {
             filteredSubtasks,
             jiraItem,
-            error,
+            errorMessage,
             sumForCurrentTTType,
             timeTrackingType,
             focusFactor,
+            labelFilter,
+            subtasks,
         } = this.props;
 
         return (
             <div className="column result">
                 {
-                    error
+                    errorMessage
                     && (
                         <div>
                             <h3>Error</h3>
-                            <p className="red error">{ error.message || JSON.stringify(error.jiraErrors) }</p>
+                            <p className="red error">{ errorMessage }</p>
                         </div>
                     )
                 }
@@ -79,8 +83,8 @@ class Results extends Component {
                     <dl className="flexed">
                         <dt>Storypoints</dt>
                         <dd className="important">{(jiraItem && jiraItem.fields[constants.CUST_FIELD_STORY_POINTS]) || <None />}</dd>
-                        <dt>Total sub-tasks</dt>
-                        <dd className="important">{filteredSubtasks.length}</dd>
+                        <dt>{labelFilter === 'all' ? `Total sub-tasks` : `Sub-tasks in category ${labelFilter}`}</dt>
+                        <dd className="important">{filteredSubtasks.length}{labelFilter !== 'all' ? `(of ${subtasks.length})` : null}</dd>
                         {
                             timeTrackingType === constants.TT_TYPE_ESTIMATE && (
                                 <dt>Dirty estimate (with focus factor)</dt>

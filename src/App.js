@@ -6,6 +6,7 @@ import Snackbar from 'material-ui/Snackbar';
 import './App.css';
 import * as actions from './actions';
 import * as selectors from './selectors';
+import * as constants from './constants';
 import General from './General';
 import Subtasks from './Subtasks';
 import Results from './Results';
@@ -89,7 +90,7 @@ class App extends Component {
                 </div>
                 <Snackbar
                     message={snackbarMessage || ''}
-                    autoHideDuration={5000}
+                    autoHideDuration={constants.SNACKBAR_MESSAGE_AUTO_HIDE_DURATION}
                     onRequestClose={this.handleRequestClose}
                     open={this.state.snackbarOpen}
                     transitionDuration={600}

@@ -220,11 +220,12 @@ app.all(`/jira-connector/api/:object?/:method?`, async (req, res) => {
 
     } catch (exception) {
         console.error(ts(req), `ERROR:`, exception);
-        const serializedException = serializeError(exception);
+        // const serializedException = serializeError(exception);
+        /* serializedException *//* get(serializedException, 'message') || get(serializedException, 'errorMessages.0') */
         res.status(500).json({
             error: isString(exception)
                 ? exception
-                : get(serializedException, 'message') || get(serializedException, 'errorMessages.0'),
+                : serializeError(exception),
             requestId
         });
     }

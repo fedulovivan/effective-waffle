@@ -112,7 +112,7 @@ export default class Row extends PureComponent {
                             />
                         )
                         : (
-                            <span className={classNames({ gray: !currentTimeTrackingField })}>
+                            <span style={{ fontSize: '14px' }} className={classNames({ gray: !currentTimeTrackingField })}>
                                 {
                                     humanizeDuration(
                                         currentTimeTrackingField,
