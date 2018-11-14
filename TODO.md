@@ -2,6 +2,10 @@
 - delete session if jira rejects access
 - allow to use zero original estimate
 - cannot use start over if no local changes are present, but anyway data is oudated
+- stick east (right) panels to the top
+- pick default category for new item from filter
+- filter items by status
+- able to edit remainig
 
 + show details for parent
 +prefix [] (options - DB, QA, GUI, DOC)
