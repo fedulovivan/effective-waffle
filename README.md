@@ -5,3 +5,6 @@ build docker image and save it as tar archive
 
 run application without docker
 ./start.sh
+
+generate ssh keys for git
+./gen-ssh-keys.sh
