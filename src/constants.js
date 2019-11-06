@@ -7,14 +7,15 @@ export const OFFICIAL_NAME = 'Jira Planning Tool';
 export const SNACKBAR_MESSAGE_AUTO_HIDE_DURATION = 7000;
 
 export const LABELS = [
-    'GUI',
+    'CAMS',
     'CORE',
-    'QA',
     'DB',
     'DEV',
-    'IMDB',
     'DOC',
+    'GUI',
+    'IMDB',
     'OTHER',
+    'QA',
     'UT',
 ];
 

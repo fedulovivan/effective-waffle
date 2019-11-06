@@ -1,6 +1,6 @@
 {
   "name": "effective-waffle",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "dependencies": {
     "classnames": "^2.2.5",
@@ -41,7 +41,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "packall": "zip -FS --quiet --symlinks --recurse-paths prod.zip . --exclude @distrib.exclude"
+    "distrib": "zip -FS --quiet --symlinks --recurse-paths prod.zip . --exclude @distrib.exclude"
   },
   "devDependencies": {
     "eslint-config-airbnb": "^16.1.0",

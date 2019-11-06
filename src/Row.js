@@ -126,7 +126,7 @@ export default class Row extends PureComponent {
                 <TableCell className="cell jira-item" >
                     {
                         key
-                        ? <a title="Open item in new tab in Jira" target="_blank" rel="noopener noreferrer" href={`https://jira.danateq.net/browse/${key}`}>{key}</a>
+                        ? <a title="Open item in new tab in Jira" target="_blank" rel="noopener noreferrer" href={`https://jira.pelatro.net/browse/${key}`}>{key}</a>
                         : <None />
                     }
                 </TableCell>

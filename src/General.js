@@ -158,7 +158,7 @@ class General extends Component {
                 {jiraItem ? (
                         <dl className="flexed">
                             <dt>Link</dt>
-                            <dd><a title="Open item in new tab in Jira" target="_blank" rel="noopener noreferrer" href={`https://jira.danateq.net/browse/${jiraItem.key}`}>{jiraItem.key}</a></dd>
+                            <dd><a title="Open item in new tab in Jira" target="_blank" rel="noopener noreferrer" href={`https://jira.pelatro.net/browse/${jiraItem.key}`}>{jiraItem.key}</a></dd>
                             <dt>Summary</dt>
                             <dd>{jiraItem.fields.summary}</dd>
                             <dt>R&D Division name</dt>
@@ -179,7 +179,7 @@ class General extends Component {
                                     title="Open special Jira page for managing issued access tokens"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    href="https://jira.danateq.net/plugins/servlet/oauth/users/access-tokens"
+                                    href="https://jira.pelatro.net/plugins/servlet/oauth/users/access-tokens"
                                 >
                                     Revoke access to Jira
                                 </a>

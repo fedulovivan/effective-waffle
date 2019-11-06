@@ -1,5 +1,5 @@
 {
-    "appHostName": "planning-local.danateq.net",
-    "jiraHostName": "jira.danateq.net",
+    "appHostName": "planning-local.pelatro.net",
+    "jiraHostName": "jira.pelatro.net",
     "backendPort": 1337
 }
