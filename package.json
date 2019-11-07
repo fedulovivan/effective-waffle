@@ -41,7 +41,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "distrib": "zip -FS --quiet --symlinks --recurse-paths prod.zip . --exclude @distrib.exclude"
+    "zip": "zip -FS --quiet --symlinks --recurse-paths prod.zip . --exclude @distrib.exclude",
+    "distrib": "yarn install && yarn build && yarn zip"
   },
   "devDependencies": {
     "eslint-config-airbnb": "^16.1.0",
