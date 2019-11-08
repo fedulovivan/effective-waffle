@@ -35,7 +35,7 @@
   },
   "scripts": {
     "back:dev": "node --inspect backend/index",
-    "back:prod": "node backend/index >> logs/backend.log 2>&1 &",
+    "back:prod": "node $PWD/backend/index >> logs/backend.log 2>&1 &",
     "back:docker": "node backend/index",
     "webpack": "PORT=6613 react-scripts start",
     "build": "react-scripts build",
