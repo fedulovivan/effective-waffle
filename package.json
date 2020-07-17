@@ -10,7 +10,7 @@
     "express-session": "^1.15.6",
     "humanize-duration": "^3.12.0",
     "jira-connector": "^2.7.0",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.19",
     "material-ui": "^1.0.0-beta.22",
     "material-ui-icons": "^1.0.0-beta.17",
     "moment": "^2.19.3",
